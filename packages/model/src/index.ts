@@ -107,9 +107,40 @@ export interface RepeaterGeneratorSpec {
   timeOffsetSeconds: number;
 }
 
+/**
+ * Finite window over an otherwise unbounded integer ID domain.
+ * `progress`, `max` and `interval` are semantic values; no Scratch storage layout leaks here.
+ */
+export interface IndexedWindowSpec {
+  progress: NumberTrack;
+  max: number;
+  interval: number;
+}
+
+/** Periodic/infinite-scroll instances reconstructed directly from time. */
+export interface PeriodicGeneratorSpec extends IndexedWindowSpec {
+  type: "periodic";
+  phaseToX: number;
+  phaseToY: number;
+  rotationStepDeg: number;
+}
+
+/** Deterministic radial particles reconstructed from time + integer ID. */
+export interface ParticleGeneratorSpec extends IndexedWindowSpec {
+  type: "particle";
+  angleDistribution: "golden-ratio";
+  radiusScale: number;
+  rotationPerPhaseDeg: number;
+}
+
+export type GeneratorSpec =
+  | RepeaterGeneratorSpec
+  | PeriodicGeneratorSpec
+  | ParticleGeneratorSpec;
+
 export interface GeneratorNode extends CommonNodeFields {
   type: "generator";
-  generator: RepeaterGeneratorSpec;
+  generator: GeneratorSpec;
   template: StampNode;
 }
 

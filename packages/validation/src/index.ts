@@ -132,11 +132,45 @@ function validateNode(
       );
       break;
     case "generator":
-      if (!Number.isInteger(node.generator.count) || node.generator.count < 0) {
-        error(issues, "INVALID_GENERATOR_COUNT", `${path}.generator.count`, "Generator count must be a non-negative integer.");
-      }
+      validateGenerator(node.generator, `${path}.generator`, timebase, issues);
       validateNode(node.template, `${path}.template`, timebase, assetIds, nodeIds, issues);
       break;
+  }
+}
+
+function validateGenerator(
+  generator: Extract<SceneNode, { type: "generator" }>["generator"],
+  path: string,
+  timebase: Timebase,
+  issues: ValidationIssue[]
+): void {
+  switch (generator.type) {
+    case "repeater":
+      if (!Number.isInteger(generator.count) || generator.count < 0) {
+        error(issues, "INVALID_GENERATOR_COUNT", `${path}.count`, "Generator count must be a non-negative integer.");
+      }
+      if (!Number.isFinite(generator.timeOffsetSeconds)) {
+        error(issues, "INVALID_GENERATOR_TIME_OFFSET", `${path}.timeOffsetSeconds`, "timeOffsetSeconds must be finite.");
+      }
+      return;
+    case "periodic":
+    case "particle":
+      validateTrack(generator.progress, `${path}.progress`, timebase, issues);
+      if (!Number.isFinite(generator.max) || generator.max < 0) {
+        error(issues, "INVALID_GENERATOR_MAX", `${path}.max`, "Indexed generator max must be finite and non-negative.");
+      }
+      if (!Number.isFinite(generator.interval) || generator.interval <= 0) {
+        error(issues, "INVALID_GENERATOR_INTERVAL", `${path}.interval`, "Indexed generator interval must be finite and positive.");
+      }
+      if (generator.type === "particle") {
+        if (!Number.isFinite(generator.radiusScale)) {
+          error(issues, "INVALID_PARTICLE_RADIUS_SCALE", `${path}.radiusScale`, "radiusScale must be finite.");
+        }
+        if (!Number.isFinite(generator.rotationPerPhaseDeg)) {
+          error(issues, "INVALID_PARTICLE_ROTATION", `${path}.rotationPerPhaseDeg`, "rotationPerPhaseDeg must be finite.");
+        }
+      }
+      return;
   }
 }
 

@@ -33,7 +33,7 @@ const animatedStamp: StampNode = {
   pass: "text",
   order: 10,
   temporalSampling: {
-    sampleCount: 2,
+    sampleCount: 20,
     shutterSeconds: 0.1,
     distribution: "uniform",
     historicalOpacity: 0.25,
@@ -71,12 +71,107 @@ const repeater: GeneratorNode = {
   }
 };
 
+const background: GeneratorNode = {
+  type: "generator",
+  id: "pdf-background",
+  timing: { start: seconds(0), end: seconds(4) },
+  transform: identityTransform(),
+  opacity: constantTrack(1),
+  pass: "background",
+  order: 0,
+  generator: {
+    type: "periodic",
+    progress: {
+      defaultValue: 0,
+      keyframes: [
+        { time: seconds(0), value: 0 },
+        { time: seconds(4), value: 900 }
+      ]
+    },
+    max: 400,
+    interval: 50,
+    phaseToX: 1,
+    phaseToY: 0,
+    rotationStepDeg: 0
+  },
+  template: {
+    type: "stamp",
+    id: "background-template",
+    assetId: "background-tile",
+    timing: { start: seconds(0), end: seconds(4) },
+    transform: identityTransform(),
+    opacity: constantTrack(1),
+    pass: "background",
+    order: 0
+  }
+};
+
+const particles: GeneratorNode = {
+  type: "generator",
+  id: "pdf-particles",
+  timing: { start: seconds(0), end: seconds(4) },
+  transform: identityTransform(),
+  opacity: constantTrack(1),
+  pass: "particles",
+  order: 1,
+  generator: {
+    type: "particle",
+    progress: {
+      defaultValue: 0,
+      keyframes: [
+        { time: seconds(0), value: 0 },
+        { time: seconds(4), value: 400 }
+      ]
+    },
+    max: 400,
+    interval: 25,
+    angleDistribution: "golden-ratio",
+    radiusScale: 1,
+    rotationPerPhaseDeg: 0.3
+  },
+  template: {
+    type: "stamp",
+    id: "particle-template",
+    assetId: "particle",
+    timing: { start: seconds(0), end: seconds(4) },
+    transform: identityTransform(),
+    opacity: constantTrack(1),
+    pass: "particles",
+    order: 1
+  }
+};
+
+const effectShadow: StampNode = {
+  type: "stamp",
+  id: "effect-shadow-fixture",
+  assetId: "effect",
+  timing: { start: seconds(0), end: seconds(4) },
+  transform: identityTransform(),
+  opacity: constantTrack(0.5),
+  pass: "effect-shadow",
+  order: 0
+};
+
+const effectBase: StampNode = {
+  type: "stamp",
+  id: "effect-base-fixture",
+  assetId: "effect",
+  timing: { start: seconds(0), end: seconds(4) },
+  transform: identityTransform(),
+  opacity: constantTrack(1),
+  pass: "effect-base",
+  order: 0
+};
+
 export const coreFixtureProject: AuthoringProject = {
   version: 1,
   seed: 20260912,
   assets: [
     { id: "title", kind: "svg", source: "fixtures/title.svg" },
-    { id: "dot", kind: "svg", source: "fixtures/dot.svg" }
+    { id: "dot", kind: "svg", source: "fixtures/dot.svg" },
+    { id: "background-tile", kind: "svg", source: "fixtures/background-tile.svg" },
+    { id: "particle", kind: "svg", source: "fixtures/particle.svg" },
+    { id: "effect", kind: "svg", source: "fixtures/effect.svg" }
   ],
   compositions: [
     {
@@ -111,7 +206,7 @@ export const coreFixtureProject: AuthoringProject = {
           }
         ]
       },
-      nodes: [repeater, animatedStamp]
+      nodes: [background, repeater, particles, effectShadow, effectBase, animatedStamp]
     }
   ]
 };

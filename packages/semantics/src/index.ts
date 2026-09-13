@@ -253,3 +253,43 @@ function hashToUnit(seed: number, index: number): number {
   x ^= x >>> 16;
   return ((x >>> 0) / 0xffffffff) * 2 - 1;
 }
+
+export interface ActiveIdRange {
+  startId: number;
+  endIdExclusive: number;
+  count: number;
+}
+
+/**
+ * Returns the finite integer-ID window needed for periodic generators.
+ * Compatibility formula: floor(progress / interval) - ceil(max / interval),
+ * with ceil(max / interval) + 1 candidates.
+ */
+export function activeIdRange(progress: number, max: number, interval: number): ActiveIdRange {
+  if (!Number.isFinite(progress)) throw new Error("progress must be finite.");
+  if (!Number.isFinite(max) || max < 0) throw new Error("max must be finite and non-negative.");
+  if (!Number.isFinite(interval) || interval <= 0) throw new Error("interval must be finite and positive.");
+  const historyCount = Math.ceil(max / interval);
+  const startId = Math.floor(progress / interval) - historyCount;
+  const count = historyCount + 1;
+  return { startId, endIdExclusive: startId + count, count };
+}
+
+export function enumerateIdRange(range: ActiveIdRange): number[] {
+  return Array.from({ length: range.count }, (_, offset) => range.startId + offset);
+}
+
+export function indexedPhase(progress: number, interval: number, id: number): number {
+  return progress - interval * id;
+}
+
+export function fractionalPart(value: number): number {
+  return value - Math.floor(value);
+}
+
+export const GOLDEN_RATIO_CONJUGATE = (Math.sqrt(5) - 1) / 2;
+
+/** q = frac(ID * (sqrt(5) - 1) / 2), deterministic for every integer ID. */
+export function goldenRatioPhase(id: number): number {
+  return fractionalPart(id * GOLDEN_RATIO_CONJUGATE);
+}

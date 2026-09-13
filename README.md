@@ -29,6 +29,9 @@ This bootstrap implements the first vertical core slice:
 - deterministic camera shake modifier
 - temporal sampling for trails / blur-like effects
 - deterministic repeater expansion
+- shared finite indexed-ID generator windows
+- periodic / infinite-scroll generator reconstruction
+- deterministic golden-ratio particle reconstruction
 - backend-neutral stamp Render Plan
 - semantic validation
 - executable compatibility fixtures

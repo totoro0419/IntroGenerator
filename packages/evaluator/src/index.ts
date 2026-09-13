@@ -12,9 +12,13 @@ import type {
 } from "@introgenerator/model";
 import {
   IDENTITY_AFFINE,
+  activeIdRange,
   deterministicNoise,
+  enumerateIdRange,
   evaluateTrack,
   evaluateTransform,
+  goldenRatioPhase,
+  indexedPhase,
   isActive,
   multiplyAffine,
   rotationDeg,
@@ -235,28 +239,21 @@ function evaluateGenerator(
   context: EvaluationContext,
   output: EvaluatedStamp[]
 ): void {
-  const spec = node.generator;
-  for (let index = 0; index < spec.count; index++) {
-    const instanceTime = tSeconds - index * spec.timeOffsetSeconds;
-    const instanceMatrix = multiplyAffine(
-      multiplyAffine(
-        multiplyAffine(
-          translation(spec.offsetX * index, spec.offsetY * index),
-          rotationDeg(spec.rotationStepDeg * index)
-        ),
-        scale(Math.pow(spec.scaleStepX, index), Math.pow(spec.scaleStepY, index))
-      ),
-      IDENTITY_AFFINE
-    );
+  const template = node.template;
+  const instances = enumerateGeneratorInstances(node.generator, tSeconds, context.timebase);
 
-    const template = node.template;
+  for (const instance of instances) {
+    const instanceTime = instance.timeSeconds;
     const start = timeToSeconds(template.timing.start, context.timebase);
     const end = timeToSeconds(template.timing.end, context.timebase);
     if (!isActive(start, end, instanceTime)) continue;
 
     const templateTransform = evaluateTransform(template.transform, instanceTime, context.timebase);
     const templateOpacity = clamp01(evaluateTrack(template.opacity, instanceTime, context.timebase));
-    const instanceWorld = multiplyAffine(multiplyAffine(worldMatrix, instanceMatrix), templateTransform.matrix);
+    const instanceWorld = multiplyAffine(
+      multiplyAffine(worldMatrix, instance.matrix),
+      templateTransform.matrix
+    );
     const camera = evaluateCamera(
       context.composition.camera,
       instanceTime,
@@ -266,19 +263,93 @@ function evaluateGenerator(
 
     output.push({
       kind: "stamp",
-      id: `${node.id}:${template.id}:i${index}:${sampleKind}:${stableTimeId(instanceTime)}`,
+      id: `${node.id}:${template.id}:i${instance.id}:${sampleKind}:${stableTimeId(instanceTime)}`,
       sourceNodeId: template.id,
       ownerNodeId: node.id,
       assetId: template.assetId,
       sampleTimeSeconds: instanceTime,
       sampleKind,
-      instanceIndex: index,
+      instanceIndex: instance.id,
       worldMatrix: instanceWorld,
       screenMatrix: multiplyAffine(camera.viewMatrix, instanceWorld),
       opacity: opacity * templateOpacity,
       pass: template.pass,
-      order: template.order + index * 1e-6
+      order: template.order + instance.ordinal * 1e-6
     });
+  }
+}
+
+export interface GeneratorInstance {
+  /** Stable integer ID reconstructed without persistent instance state. */
+  id: number;
+  /** Stable order inside the current finite enumeration window. */
+  ordinal: number;
+  timeSeconds: number;
+  phase: number | null;
+  matrix: Affine2D;
+}
+
+export function enumerateGeneratorInstances(
+  spec: GeneratorNode["generator"],
+  tSeconds: number,
+  timebase: Timebase
+): GeneratorInstance[] {
+  switch (spec.type) {
+    case "repeater":
+      return Array.from({ length: spec.count }, (_, index) => ({
+        id: index,
+        ordinal: index,
+        timeSeconds: tSeconds - index * spec.timeOffsetSeconds,
+        phase: null,
+        matrix: multiplyAffine(
+          multiplyAffine(
+            translation(spec.offsetX * index, spec.offsetY * index),
+            rotationDeg(spec.rotationStepDeg * index)
+          ),
+          scale(Math.pow(spec.scaleStepX, index), Math.pow(spec.scaleStepY, index))
+        )
+      }));
+
+    case "periodic": {
+      const progress = evaluateTrack(spec.progress, tSeconds, timebase);
+      const ids = enumerateIdRange(activeIdRange(progress, spec.max, spec.interval));
+      return ids.map((id, ordinal) => {
+        const phase = indexedPhase(progress, spec.interval, id);
+        return {
+          id,
+          ordinal,
+          timeSeconds: tSeconds,
+          phase,
+          matrix: multiplyAffine(
+            translation(phase * spec.phaseToX, phase * spec.phaseToY),
+            rotationDeg(id * spec.rotationStepDeg)
+          )
+        };
+      });
+    }
+
+    case "particle": {
+      const progress = evaluateTrack(spec.progress, tSeconds, timebase);
+      const ids = enumerateIdRange(activeIdRange(progress, spec.max, spec.interval));
+      return ids.map((id, ordinal) => {
+        const phase = indexedPhase(progress, spec.interval, id);
+        const q = goldenRatioPhase(id);
+        const angleRadians = q * Math.PI * 2;
+        return {
+          id,
+          ordinal,
+          timeSeconds: tSeconds,
+          phase,
+          matrix: multiplyAffine(
+            translation(
+              Math.cos(angleRadians) * phase * spec.radiusScale,
+              Math.sin(angleRadians) * phase * spec.radiusScale
+            ),
+            rotationDeg(spec.rotationPerPhaseDeg * phase)
+          )
+        };
+      });
+    }
   }
 }
 
