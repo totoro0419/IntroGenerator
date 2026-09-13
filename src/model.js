@@ -14,6 +14,10 @@ export function node(type,name=type,parent='root'){let n={id:uid(),name,parent,c
  if(type==='scatter')n.data={template:'',count:24,seed:1,region:'disk',size:[160,160],rotation:{kind:'uniform',min:0,max:360},scale:{kind:'uniform',min:.3,max:1},delay:constant(0)};
  if(type==='particle')n.data={emitter:null,space:'world',seed:1,rate:12,bursts:[{time:0,count:24}],life:constant(3),spawnX:constant(0),spawnY:constant(0),spawnZ:constant(0),velocity:[constant(0),constant(0),constant(0)],acceleration:[0,0,0],inheritVelocity:0,rotation:constant(0),spin:constant(45),scale:constant(.15),alpha:1,scaleCurve:'particleScale',alphaCurve:'particleAlpha',assets:['shardAsset'],accelerationSpace:'world',radialLaunch:{angleStart:0,angleSpan:360,speed:constant(75),distribution:'distributed'}};
  if(type==='image')n.data={asset:'',crop:[0,0,100,100],width:120,height:120,fit:'contain'};
+ if(type==='follower')n.data={path:'',u:0,orient:true,rotationOffset:0,asset:'glowAsset'};
+ if(type==='trail')n.data={source:'',mode:'temporal',count:24,duration:.3,widthCurve:'particleScale',alphaCurve:'particleAlpha',asset:'glowAsset'};
+ if(type==='instance')n.data={definition:'',overrides:[]};
+ if(type==='view'){n.space='screen';n.data={camera:'',worldRoot:'',backgroundRoot:null,overlayRoot:null,viewport:[-240,-180,480,360],clip:true,sort:'painter'}}
  return n
 }
 export function makeProject(){let root=node('group','Main scene',null);root.id='root';let p={format:'IGAUTHOR/1.3',projectId:uid(),width:480,height:360,duration:6,fit:'contain',background:[.025,.035,.065,1],seed:1,root:'root',definitions:[],nodes:[root],expressions:[],tracks:[{id:'particleScale',unit:'scalar',default:1,keys:[]},{id:'particleAlpha',unit:'alpha',default:1,keys:[{id:'pa0',time:0,value:1,ease:{kind:'linear'}},{id:'pa1',time:1,value:0,ease:{kind:'linear'}}]}],assets:[],audio:[],tempo:[{beat:0,bpm:120}],profile:{...profile,id:'portable-v1',timeMode:'sampled',sampleFPS:30},timeAnchors:[],markers:[]};return p}
