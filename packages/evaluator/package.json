@@ -1,0 +1,12 @@
+{
+  "name": "@introgenerator/evaluator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@introgenerator/model": "0.1.0",
+    "@introgenerator/semantics": "0.1.0"
+  }
+}

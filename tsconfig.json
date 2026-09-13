@@ -1,0 +1,11 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/model" },
+    { "path": "./packages/semantics" },
+    { "path": "./packages/evaluator" },
+    { "path": "./packages/render-plan" },
+    { "path": "./packages/validation" },
+    { "path": "./packages/fixtures" }
+  ]
+}
