@@ -1,0 +1,16 @@
+{
+  "id": "portable-v1",
+  "fps": 30,
+  "timeMode": "continuousCertified",
+  "sampleFPS": 60,
+  "positionErrorPx": 0.25,
+  "alphaError": 0.00392156862745098,
+  "curveErrorPx": 0.25,
+  "maxDraws": 1024,
+  "maxOpsPerFrame": 100000,
+  "maxSamples": 2048,
+  "maxVariants": 4096,
+  "maxDecodedBytes": 268435456,
+  "maxZipBytes": 209715200,
+  "benchmarkRef": null
+}

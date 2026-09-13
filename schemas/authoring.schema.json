@@ -1,0 +1,4403 @@
+{
+  "type": "object",
+  "properties": {
+    "format": {
+      "enum": [
+        "IGAUTHOR/1.3"
+      ]
+    },
+    "projectId": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+    },
+    "width": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1e+100
+    },
+    "height": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1e+100
+    },
+    "duration": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1e+100
+    },
+    "fit": {
+      "enum": [
+        "contain",
+        "cover"
+      ]
+    },
+    "background": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": -1e+100,
+        "maximum": 1e+100
+      },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "root": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+    },
+    "definitions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+      },
+      "minItems": 0
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      },
+      "minItems": 1
+    },
+    "expressions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/expression"
+      },
+      "minItems": 0
+    },
+    "tracks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/track"
+      },
+      "minItems": 0
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/asset"
+      },
+      "minItems": 0
+    },
+    "audio": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/audio"
+      },
+      "minItems": 0
+    },
+    "tempo": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "beat": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "bpm": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1e+100
+          }
+        },
+        "required": [
+          "beat",
+          "bpm"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "profile": {
+      "$ref": "#/$defs/profile"
+    },
+    "timeAnchors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/timeAnchor"
+      },
+      "minItems": 0
+    },
+    "markers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/marker"
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "format",
+    "projectId",
+    "width",
+    "height",
+    "duration",
+    "fit",
+    "background",
+    "seed",
+    "root",
+    "definitions",
+    "nodes",
+    "expressions",
+    "tracks",
+    "assets",
+    "audio",
+    "tempo",
+    "profile"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:introgenerator:authoring:1.3",
+  "$defs": {
+    "binding": {
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": -1e+100,
+          "maximum": 1e+100
+        },
+        {
+          "type": "object",
+          "properties": {
+            "expr": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            }
+          },
+          "required": [
+            "expr"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "easing": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "hold",
+                "linear",
+                "sineIn",
+                "sineOut",
+                "sineInOut",
+                "quadIn",
+                "quadOut",
+                "quadInOut",
+                "cubicIn",
+                "cubicOut",
+                "cubicInOut",
+                "quartIn",
+                "quartOut",
+                "quartInOut",
+                "quintIn",
+                "quintOut",
+                "quintInOut",
+                "expoIn",
+                "expoOut",
+                "expoInOut",
+                "circIn",
+                "circOut",
+                "circInOut",
+                "bounceIn",
+                "bounceOut",
+                "bounceInOut"
+              ]
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "backIn",
+                "backOut",
+                "backInOut"
+              ]
+            },
+            "overshoot": {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            }
+          },
+          "required": [
+            "kind",
+            "overshoot"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "elasticIn",
+                "elasticOut",
+                "elasticInOut"
+              ]
+            },
+            "period": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1e+100
+            }
+          },
+          "required": [
+            "kind",
+            "period"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "bezier"
+              ]
+            },
+            "x1": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "y1": {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            },
+            "x2": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "y2": {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            }
+          },
+          "required": [
+            "kind",
+            "x1",
+            "y1",
+            "x2",
+            "y2"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "samples"
+              ]
+            },
+            "points": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -1e+100,
+                  "maximum": 1e+100
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "minItems": 2
+            }
+          },
+          "required": [
+            "kind",
+            "points"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "powerIn",
+                "powerOut",
+                "powerInOut"
+              ]
+            },
+            "power": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1e+100
+            }
+          },
+          "required": [
+            "kind",
+            "power"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "track": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "unit": {
+          "enum": [
+            "scalar",
+            "seconds",
+            "degrees",
+            "cycles",
+            "px",
+            "alpha",
+            "channel"
+          ]
+        },
+        "default": {
+          "type": "number",
+          "minimum": -1e+100,
+          "maximum": 1e+100
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "time": {
+                "type": "number",
+                "minimum": -1e+100,
+                "maximum": 1e+100
+              },
+              "value": {
+                "type": "number",
+                "minimum": -1e+100,
+                "maximum": 1e+100
+              },
+              "ease": {
+                "$ref": "#/$defs/easing"
+              }
+            },
+            "required": [
+              "id",
+              "time",
+              "value",
+              "ease"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "id",
+        "unit",
+        "default",
+        "keys"
+      ],
+      "additionalProperties": false
+    },
+    "expression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "op": {
+              "enum": [
+                "input"
+              ]
+            },
+            "name": {
+              "enum": [
+                "masterTime",
+                "localTime",
+                "index",
+                "count",
+                "age",
+                "normalizedAge",
+                "birthTime",
+                "lineIndex",
+                "wordIndex",
+                "characterIndex",
+                "pathU"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "op",
+            "name"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "op": {
+              "enum": [
+                "track"
+              ]
+            },
+            "track": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "time": {
+              "$ref": "#/$defs/binding"
+            }
+          },
+          "required": [
+            "id",
+            "op",
+            "track",
+            "time"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "op": {
+              "enum": [
+                "add",
+                "sub",
+                "mul",
+                "div",
+                "min",
+                "max",
+                "pow",
+                "modp",
+                "atan2",
+                "lt",
+                "le",
+                "eq"
+              ]
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/binding"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "required": [
+            "id",
+            "op",
+            "args"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "op": {
+              "enum": [
+                "abs",
+                "floor",
+                "sqrt",
+                "sin",
+                "cos"
+              ]
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/binding"
+              },
+              "minItems": 1,
+              "maxItems": 1
+            }
+          },
+          "required": [
+            "id",
+            "op",
+            "args"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "op": {
+              "enum": [
+                "select"
+              ]
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/binding"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            }
+          },
+          "required": [
+            "id",
+            "op",
+            "args"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "op": {
+              "enum": [
+                "seeded"
+              ]
+            },
+            "tag": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "instance": {
+              "$ref": "#/$defs/binding"
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "id",
+            "op",
+            "tag",
+            "instance",
+            "seed"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "transform": {
+      "type": "object",
+      "properties": {
+        "position": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/binding"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "anchor": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/binding"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "scale": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/binding"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "rotation": {
+          "$ref": "#/$defs/binding"
+        }
+      },
+      "required": [
+        "position",
+        "anchor",
+        "scale",
+        "rotation"
+      ],
+      "additionalProperties": false
+    },
+    "timeMap": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "number",
+          "minimum": -1e+100,
+          "maximum": 1e+100
+        },
+        "end": {
+          "type": "number",
+          "minimum": -1e+100,
+          "maximum": 1e+100
+        },
+        "rate": {
+          "type": "number",
+          "minimum": -1e+100,
+          "maximum": 1e+100
+        },
+        "offset": {
+          "type": "number",
+          "minimum": -1e+100,
+          "maximum": 1e+100
+        },
+        "wrap": {
+          "enum": [
+            "none",
+            "clamp",
+            "loop",
+            "pingpong"
+          ]
+        },
+        "duration": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1e+100
+        },
+        "remap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/binding"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "rate",
+        "offset",
+        "wrap",
+        "duration",
+        "remap"
+      ],
+      "additionalProperties": false
+    },
+    "paint": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "solid"
+              ]
+            },
+            "rgba": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/binding"
+              },
+              "minItems": 4,
+              "maxItems": 4
+            }
+          },
+          "required": [
+            "kind",
+            "rgba"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "hsv"
+              ]
+            },
+            "hueTurns": {
+              "$ref": "#/$defs/binding"
+            },
+            "saturation": {
+              "$ref": "#/$defs/binding"
+            },
+            "value": {
+              "$ref": "#/$defs/binding"
+            },
+            "alpha": {
+              "$ref": "#/$defs/binding"
+            }
+          },
+          "required": [
+            "kind",
+            "hueTurns",
+            "saturation",
+            "value",
+            "alpha"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "linear",
+                "radial"
+              ]
+            },
+            "coordinates": {
+              "enum": [
+                "object",
+                "text",
+                "world",
+                "screen"
+              ]
+            },
+            "p0": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/binding"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "p1": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/binding"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "radius": {
+              "$ref": "#/$defs/binding"
+            },
+            "stops": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "at": {
+                    "type": "number",
+                    "minimum": -1e+100,
+                    "maximum": 1e+100
+                  },
+                  "rgba": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/binding"
+                    },
+                    "minItems": 4,
+                    "maxItems": 4
+                  }
+                },
+                "required": [
+                  "at",
+                  "rgba"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 2
+            }
+          },
+          "required": [
+            "kind",
+            "coordinates",
+            "p0",
+            "p1",
+            "radius",
+            "stops"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "stroke": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "width": {
+          "$ref": "#/$defs/binding"
+        },
+        "paint": {
+          "$ref": "#/$defs/paint"
+        },
+        "space": {
+          "enum": [
+            "geometric",
+            "screen"
+          ]
+        },
+        "cap": {
+          "enum": [
+            "round",
+            "butt",
+            "square"
+          ]
+        },
+        "join": {
+          "enum": [
+            "round",
+            "bevel",
+            "miter"
+          ]
+        },
+        "miterLimit": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1e+100
+        },
+        "uniformAlpha": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "enabled",
+        "width",
+        "paint",
+        "space",
+        "cap",
+        "join",
+        "miterLimit",
+        "uniformAlpha"
+      ],
+      "additionalProperties": false
+    },
+    "selector": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "unit": {
+          "enum": [
+            "line",
+            "word",
+            "grapheme",
+            "cluster"
+          ]
+        },
+        "from": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "to": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "countWhitespace": {
+          "type": "boolean"
+        },
+        "order": {
+          "enum": [
+            "logical",
+            "visual"
+          ]
+        },
+        "clusterPolicy": {
+          "enum": [
+            "preserve",
+            "disableOptionalLigatures",
+            "splitOutline"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "unit",
+        "from",
+        "to",
+        "countWhitespace",
+        "order",
+        "clusterPolicy"
+      ],
+      "additionalProperties": false
+    },
+    "animator": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "selector": {
+          "$ref": "#/$defs/selector"
+        },
+        "transform": {
+          "$ref": "#/$defs/transform"
+        },
+        "opacity": {
+          "$ref": "#/$defs/binding"
+        },
+        "delay": {
+          "$ref": "#/$defs/binding"
+        },
+        "phase": {
+          "$ref": "#/$defs/binding"
+        },
+        "randomDelay": {
+          "$ref": "#/$defs/binding"
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "id",
+        "selector",
+        "transform",
+        "opacity",
+        "delay",
+        "phase",
+        "randomDelay",
+        "seed"
+      ],
+      "additionalProperties": false
+    },
+    "fontRun": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "to": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "font": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "fontSize": {
+          "$ref": "#/$defs/binding"
+        },
+        "axes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          }
+        },
+        "features": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "language": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "from",
+        "to",
+        "font",
+        "fontSize",
+        "axes",
+        "features",
+        "language"
+      ],
+      "additionalProperties": false
+    },
+    "segment": {
+      "type": "object",
+      "properties": {
+        "p0": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/binding"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "p1": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/binding"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "p2": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/binding"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "p3": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/binding"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "p0",
+        "p1",
+        "p2",
+        "p3"
+      ],
+      "additionalProperties": false
+    },
+    "distribution": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "constant"
+              ]
+            },
+            "value": {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            }
+          },
+          "required": [
+            "kind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "uniform"
+              ]
+            },
+            "min": {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            },
+            "max": {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            }
+          },
+          "required": [
+            "kind",
+            "min",
+            "max"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "normal"
+              ]
+            },
+            "mean": {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            },
+            "sigma": {
+              "type": "number",
+              "minimum": 0
+            },
+            "min": {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            },
+            "max": {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            }
+          },
+          "required": [
+            "kind",
+            "mean",
+            "sigma",
+            "min",
+            "max"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "effect": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "kind": {
+              "enum": [
+                "blur"
+              ]
+            },
+            "sigma": {
+              "$ref": "#/$defs/binding"
+            },
+            "space": {
+              "enum": [
+                "local",
+                "screen"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "sigma",
+            "space"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "kind": {
+              "enum": [
+                "shadow",
+                "glow"
+              ]
+            },
+            "offset": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/binding"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "sigma": {
+              "$ref": "#/$defs/binding"
+            },
+            "spread": {
+              "$ref": "#/$defs/binding"
+            },
+            "rgba": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/binding"
+              },
+              "minItems": 4,
+              "maxItems": 4
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add"
+              ]
+            },
+            "space": {
+              "enum": [
+                "local",
+                "screen"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "offset",
+            "sigma",
+            "spread",
+            "rgba",
+            "blend",
+            "space"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "kind": {
+              "enum": [
+                "extrude"
+              ]
+            },
+            "offset": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/binding"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "steps": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "rgba": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/binding"
+              },
+              "minItems": 4,
+              "maxItems": 4
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "offset",
+            "steps",
+            "rgba"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "kind": {
+              "enum": [
+                "mask"
+              ]
+            },
+            "source": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "mode": {
+              "enum": [
+                "alpha",
+                "luma"
+              ]
+            },
+            "invert": {
+              "type": "boolean"
+            },
+            "feather": {
+              "$ref": "#/$defs/binding"
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "source",
+            "mode",
+            "invert",
+            "feather"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "kind": {
+              "enum": [
+                "warp"
+              ]
+            },
+            "quad": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/binding"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "minItems": 4,
+              "maxItems": 4
+            },
+            "sourceRect": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1e+100,
+                "maximum": 1e+100
+              },
+              "minItems": 4,
+              "maxItems": 4
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "quad",
+            "sourceRect"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "kind": {
+              "enum": [
+                "motionBlur"
+              ]
+            },
+            "shutterSeconds": {
+              "$ref": "#/$defs/binding"
+            },
+            "samples": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "phase": {
+              "$ref": "#/$defs/binding"
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "shutterSeconds",
+            "samples",
+            "phase"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "kind": {
+              "enum": [
+                "trim"
+              ]
+            },
+            "from": {
+              "$ref": "#/$defs/binding"
+            },
+            "to": {
+              "$ref": "#/$defs/binding"
+            },
+            "wrap": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "from",
+            "to",
+            "wrap"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "kind": {
+              "enum": [
+                "color"
+              ]
+            },
+            "hue": {
+              "$ref": "#/$defs/binding"
+            },
+            "brightness": {
+              "$ref": "#/$defs/binding"
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "hue",
+            "brightness"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "kind": {
+              "enum": [
+                "flash"
+              ]
+            },
+            "rgba": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/binding"
+              },
+              "minItems": 4,
+              "maxItems": 4
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "rgba"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "kind": {
+              "enum": [
+                "temporalEcho"
+              ]
+            },
+            "duration": {
+              "$ref": "#/$defs/binding"
+            },
+            "unit": {
+              "enum": [
+                "seconds",
+                "beats"
+              ]
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "softness": {
+              "$ref": "#/$defs/binding"
+            },
+            "falloff": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "includeBase": {
+              "type": "boolean"
+            },
+            "camera": {
+              "enum": [
+                "sampled",
+                "current"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "duration",
+            "unit",
+            "opacity",
+            "softness",
+            "falloff",
+            "includeBase",
+            "camera"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "kind": {
+              "enum": [
+                "symmetry"
+              ]
+            },
+            "center": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/binding"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "mode": {
+              "enum": [
+                "x",
+                "y",
+                "point"
+              ]
+            },
+            "space": {
+              "enum": [
+                "local",
+                "world",
+                "screen"
+              ]
+            },
+            "transformContent": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "center",
+            "mode",
+            "space",
+            "transformContent"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "timeAnchor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "target": {
+          "enum": [
+            "nodeStart",
+            "nodeEnd",
+            "keyframe",
+            "audioStart"
+          ]
+        },
+        "owner": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "key": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "enum": [
+            "seconds",
+            "beats"
+          ]
+        },
+        "value": {
+          "type": "number",
+          "minimum": -1e+100,
+          "maximum": 1e+100
+        }
+      },
+      "required": [
+        "id",
+        "target",
+        "owner",
+        "key",
+        "unit",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "marker": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "unit": {
+          "enum": [
+            "seconds",
+            "beats"
+          ]
+        },
+        "value": {
+          "type": "number",
+          "minimum": -1e+100,
+          "maximum": 1e+100
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "unit",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "node": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "group"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "passOrder": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "shadow",
+                      "base"
+                    ]
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              },
+              "required": [],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "composition"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "width": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1e+100
+                },
+                "height": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1e+100
+                },
+                "duration": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1e+100
+                },
+                "clip": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "width",
+                "height",
+                "duration",
+                "clip"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "instance"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "definition": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                "overrides": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "target": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                      },
+                      "property": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "$ref": "#/$defs/binding"
+                      }
+                    },
+                    "required": [
+                      "target",
+                      "property",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "definition",
+                "overrides"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "text"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "direction": {
+                  "enum": [
+                    "auto",
+                    "ltr",
+                    "rtl"
+                  ]
+                },
+                "runs": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/fontRun"
+                  },
+                  "minItems": 1
+                },
+                "boxWidth": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1e+100
+                },
+                "align": {
+                  "enum": [
+                    "left",
+                    "center",
+                    "right",
+                    "justify"
+                  ]
+                },
+                "tracking": {
+                  "$ref": "#/$defs/binding"
+                },
+                "lineHeight": {
+                  "$ref": "#/$defs/binding"
+                },
+                "anchorBox": {
+                  "enum": [
+                    "layout",
+                    "ink"
+                  ]
+                },
+                "dynamicReflow": {
+                  "type": "boolean"
+                },
+                "paint": {
+                  "$ref": "#/$defs/paint"
+                },
+                "stroke": {
+                  "$ref": "#/$defs/stroke"
+                },
+                "animators": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/animator"
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "text",
+                "direction",
+                "runs",
+                "boxWidth",
+                "align",
+                "tracking",
+                "lineHeight",
+                "anchorBox",
+                "dynamicReflow",
+                "paint",
+                "stroke",
+                "animators"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "shape"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "shape": {
+                  "enum": [
+                    "circle",
+                    "rectangle",
+                    "triangle",
+                    "diamond",
+                    "polygon",
+                    "star",
+                    "arrow",
+                    "chevron",
+                    "ring",
+                    "arc",
+                    "frame",
+                    "bracket",
+                    "crosshair",
+                    "target",
+                    "burst",
+                    "spark",
+                    "shard",
+                    "blob",
+                    "petal",
+                    "bar",
+                    "dot"
+                  ]
+                },
+                "params": {
+                  "type": "object",
+                  "properties": {
+                    "width": {
+                      "$ref": "#/$defs/binding"
+                    },
+                    "height": {
+                      "$ref": "#/$defs/binding"
+                    },
+                    "radius": {
+                      "$ref": "#/$defs/binding"
+                    },
+                    "innerRadius": {
+                      "$ref": "#/$defs/binding"
+                    },
+                    "thickness": {
+                      "$ref": "#/$defs/binding"
+                    },
+                    "cornerRadius": {
+                      "$ref": "#/$defs/binding"
+                    },
+                    "sides": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "points": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "startAngle": {
+                      "$ref": "#/$defs/binding"
+                    },
+                    "sweepAngle": {
+                      "$ref": "#/$defs/binding"
+                    },
+                    "tipRatio": {
+                      "$ref": "#/$defs/binding"
+                    },
+                    "seed": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "width",
+                    "height",
+                    "radius",
+                    "innerRadius",
+                    "thickness",
+                    "cornerRadius",
+                    "sides",
+                    "points",
+                    "startAngle",
+                    "sweepAngle",
+                    "tipRatio",
+                    "seed"
+                  ],
+                  "additionalProperties": false
+                },
+                "paint": {
+                  "$ref": "#/$defs/paint"
+                },
+                "stroke": {
+                  "$ref": "#/$defs/stroke"
+                }
+              },
+              "required": [
+                "shape",
+                "params",
+                "paint",
+                "stroke"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "image"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "asset": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                "crop": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": -1e+100,
+                    "maximum": 1e+100
+                  },
+                  "minItems": 4,
+                  "maxItems": 4
+                },
+                "width": {
+                  "$ref": "#/$defs/binding"
+                },
+                "height": {
+                  "$ref": "#/$defs/binding"
+                },
+                "fit": {
+                  "enum": [
+                    "contain",
+                    "cover",
+                    "stretch"
+                  ]
+                }
+              },
+              "required": [
+                "asset",
+                "crop",
+                "width",
+                "height",
+                "fit"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "path"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "segments": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/segment"
+                  },
+                  "minItems": 0
+                },
+                "spline": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "enum": [
+                            "centripetalCatmullRom"
+                          ]
+                        },
+                        "points": {
+                          "type": "array",
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/$defs/binding"
+                            },
+                            "minItems": 2,
+                            "maxItems": 2
+                          },
+                          "minItems": 2
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "points"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "closed": {
+                  "type": "boolean"
+                },
+                "fill": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/paint"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "stroke": {
+                  "$ref": "#/$defs/stroke"
+                },
+                "trimStart": {
+                  "$ref": "#/$defs/binding"
+                },
+                "trimEnd": {
+                  "$ref": "#/$defs/binding"
+                },
+                "ribbon": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "widthCurve": {
+                          "type": "string",
+                          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                        },
+                        "alphaCurve": {
+                          "type": "string",
+                          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                        },
+                        "spacingPx": {
+                          "type": "number",
+                          "exclusiveMinimum": 0,
+                          "maximum": 1e+100
+                        }
+                      },
+                      "required": [
+                        "widthCurve",
+                        "alphaCurve",
+                        "spacingPx"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "bezier": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "points": {
+                          "type": "array",
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/$defs/binding"
+                            },
+                            "minItems": 2,
+                            "maxItems": 2
+                          },
+                          "minItems": 2
+                        }
+                      },
+                      "required": [
+                        "points"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "decorations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                      },
+                      "kind": {
+                        "enum": [
+                          "endpoints",
+                          "alongPath"
+                        ]
+                      },
+                      "asset": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                      },
+                      "size": {
+                        "$ref": "#/$defs/binding"
+                      },
+                      "angle": {
+                        "$ref": "#/$defs/binding"
+                      },
+                      "opacity": {
+                        "$ref": "#/$defs/binding"
+                      },
+                      "spacing": {
+                        "type": "number",
+                        "exclusiveMinimum": 0,
+                        "maximum": 1e+100
+                      },
+                      "orientation": {
+                        "enum": [
+                          "fixed",
+                          "tangent"
+                        ]
+                      },
+                      "pass": {
+                        "enum": [
+                          "base",
+                          "shadow"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "kind",
+                      "asset",
+                      "size",
+                      "angle",
+                      "opacity",
+                      "spacing",
+                      "orientation",
+                      "pass"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "segments",
+                "spline",
+                "closed",
+                "fill",
+                "stroke",
+                "trimStart",
+                "trimEnd",
+                "ribbon"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "repeater"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "template": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                "mode": {
+                  "enum": [
+                    "linear",
+                    "radial",
+                    "grid",
+                    "path",
+                    "lattice"
+                  ]
+                },
+                "count": {
+                  "$ref": "#/$defs/binding"
+                },
+                "maxCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "columns": {
+                  "$ref": "#/$defs/binding"
+                },
+                "radius": {
+                  "$ref": "#/$defs/binding"
+                },
+                "offset": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/binding"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "rotationStep": {
+                  "$ref": "#/$defs/binding"
+                },
+                "scaleStep": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/binding"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "opacityStep": {
+                  "$ref": "#/$defs/binding"
+                },
+                "colorStep": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/binding"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "phaseStep": {
+                  "$ref": "#/$defs/binding"
+                },
+                "delay": {
+                  "$ref": "#/$defs/binding"
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "u0": {
+                  "$ref": "#/$defs/binding"
+                },
+                "uStep": {
+                  "$ref": "#/$defs/binding"
+                },
+                "basis": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/binding"
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "scroll": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/binding"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "order": {
+                  "enum": [
+                    "instanceMajor",
+                    "templateMajor"
+                  ]
+                }
+              },
+              "required": [
+                "template",
+                "mode",
+                "count",
+                "maxCount",
+                "columns",
+                "radius",
+                "offset",
+                "rotationStep",
+                "scaleStep",
+                "opacityStep",
+                "colorStep",
+                "phaseStep",
+                "delay",
+                "path",
+                "u0",
+                "uStep",
+                "basis",
+                "scroll",
+                "order"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "scatter"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "template": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "seed": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "region": {
+                  "enum": [
+                    "rectangle",
+                    "disk"
+                  ]
+                },
+                "size": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/binding"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "rotation": {
+                  "$ref": "#/$defs/distribution"
+                },
+                "scale": {
+                  "$ref": "#/$defs/distribution"
+                },
+                "delay": {
+                  "$ref": "#/$defs/distribution"
+                }
+              },
+              "required": [
+                "template",
+                "count",
+                "seed",
+                "region",
+                "size",
+                "rotation",
+                "scale",
+                "delay"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "particle"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "emitter": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "space": {
+                  "enum": [
+                    "world",
+                    "screen",
+                    "viewAttached",
+                    "follow"
+                  ]
+                },
+                "seed": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "rate": {
+                  "$ref": "#/$defs/binding"
+                },
+                "bursts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "time": {
+                        "type": "number",
+                        "minimum": -1e+100,
+                        "maximum": 1e+100
+                      },
+                      "count": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "time",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 0
+                },
+                "life": {
+                  "$ref": "#/$defs/distribution"
+                },
+                "spawnX": {
+                  "$ref": "#/$defs/distribution"
+                },
+                "spawnY": {
+                  "$ref": "#/$defs/distribution"
+                },
+                "spawnZ": {
+                  "$ref": "#/$defs/distribution"
+                },
+                "velocity": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/distribution"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "acceleration": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/binding"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "inheritVelocity": {
+                  "$ref": "#/$defs/binding"
+                },
+                "rotation": {
+                  "$ref": "#/$defs/distribution"
+                },
+                "spin": {
+                  "$ref": "#/$defs/distribution"
+                },
+                "scale": {
+                  "$ref": "#/$defs/distribution"
+                },
+                "alpha": {
+                  "$ref": "#/$defs/binding"
+                },
+                "scaleCurve": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                "alphaCurve": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                "assets": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                  },
+                  "minItems": 1
+                },
+                "accelerationSpace": {
+                  "enum": [
+                    "world",
+                    "birthLocal"
+                  ]
+                },
+                "radialLaunch": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "angleStart": {
+                          "$ref": "#/$defs/binding"
+                        },
+                        "angleSpan": {
+                          "$ref": "#/$defs/binding"
+                        },
+                        "speed": {
+                          "$ref": "#/$defs/distribution"
+                        },
+                        "distribution": {
+                          "enum": [
+                            "random",
+                            "distributed"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "angleStart",
+                        "angleSpan",
+                        "speed",
+                        "distribution"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "emitter",
+                "space",
+                "seed",
+                "rate",
+                "bursts",
+                "life",
+                "spawnX",
+                "spawnY",
+                "spawnZ",
+                "velocity",
+                "acceleration",
+                "inheritVelocity",
+                "rotation",
+                "spin",
+                "scale",
+                "alpha",
+                "scaleCurve",
+                "alphaCurve",
+                "assets"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "view"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "camera": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                "worldRoot": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                "backgroundRoot": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "overlayRoot": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "viewport": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": -1e+100,
+                    "maximum": 1e+100
+                  },
+                  "minItems": 4,
+                  "maxItems": 4
+                },
+                "clip": {
+                  "type": "boolean"
+                },
+                "sort": {
+                  "enum": [
+                    "painter",
+                    "depth"
+                  ]
+                }
+              },
+              "required": [
+                "camera",
+                "worldRoot",
+                "backgroundRoot",
+                "overlayRoot",
+                "viewport",
+                "clip",
+                "sort"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "camera"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "projection": {
+                  "enum": [
+                    "orthographic",
+                    "perspective"
+                  ]
+                },
+                "zoom": {
+                  "$ref": "#/$defs/binding"
+                },
+                "focal": {
+                  "$ref": "#/$defs/binding"
+                },
+                "near": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1e+100
+                },
+                "far": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1e+100
+                },
+                "shakeX": {
+                  "$ref": "#/$defs/binding"
+                },
+                "shakeY": {
+                  "$ref": "#/$defs/binding"
+                },
+                "shakeRoll": {
+                  "$ref": "#/$defs/binding"
+                }
+              },
+              "required": [
+                "projection",
+                "zoom",
+                "focal",
+                "near",
+                "far",
+                "shakeX",
+                "shakeY",
+                "shakeRoll"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "follower"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                "u": {
+                  "$ref": "#/$defs/binding"
+                },
+                "orient": {
+                  "type": "boolean"
+                },
+                "rotationOffset": {
+                  "$ref": "#/$defs/binding"
+                },
+                "asset": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                }
+              },
+              "required": [
+                "path",
+                "u",
+                "orient",
+                "rotationOffset",
+                "asset"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "trail"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                "mode": {
+                  "enum": [
+                    "temporal",
+                    "shapeFollow"
+                  ]
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "duration": {
+                  "$ref": "#/$defs/binding"
+                },
+                "widthCurve": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                "alphaCurve": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                "asset": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                }
+              },
+              "required": [
+                "source",
+                "mode",
+                "count",
+                "duration",
+                "widthCurve",
+                "alphaCurve",
+                "asset"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "parent": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 0
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "space": {
+              "enum": [
+                "inherit",
+                "world",
+                "screen"
+              ]
+            },
+            "time": {
+              "$ref": "#/$defs/timeMap"
+            },
+            "transform": {
+              "$ref": "#/$defs/transform"
+            },
+            "opacity": {
+              "$ref": "#/$defs/binding"
+            },
+            "opacityMode": {
+              "enum": [
+                "inherit",
+                "isolated"
+              ]
+            },
+            "blend": {
+              "enum": [
+                "sourceOver",
+                "add",
+                "multiply",
+                "screen"
+              ]
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/effect"
+              },
+              "minItems": 0
+            },
+            "type": {
+              "enum": [
+                "clip"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "assets": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+                  },
+                  "minItems": 1
+                },
+                "times": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": -1e+100,
+                    "maximum": 1e+100
+                  },
+                  "minItems": 1
+                },
+                "duration": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1e+100
+                }
+              },
+              "required": [
+                "assets",
+                "times",
+                "duration"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "parent",
+            "children",
+            "enabled",
+            "space",
+            "time",
+            "transform",
+            "opacity",
+            "opacityMode",
+            "blend",
+            "effects",
+            "type",
+            "data"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "asset": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "kind": {
+          "enum": [
+            "image",
+            "font",
+            "audio"
+          ]
+        },
+        "mime": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytesBase64": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "externalRef": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "mime",
+        "sha256",
+        "bytesBase64",
+        "externalRef"
+      ],
+      "additionalProperties": false
+    },
+    "audio": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "asset": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "start": {
+          "type": "number",
+          "minimum": -1e+100,
+          "maximum": 1e+100
+        },
+        "sourceIn": {
+          "type": "number",
+          "minimum": -1e+100,
+          "maximum": 1e+100
+        },
+        "sourceOut": {
+          "type": "number",
+          "minimum": -1e+100,
+          "maximum": 1e+100
+        },
+        "rate": {
+          "type": "number",
+          "minimum": -1e+100,
+          "maximum": 1e+100
+        },
+        "gain": {
+          "$ref": "#/$defs/binding"
+        },
+        "pan": {
+          "$ref": "#/$defs/binding"
+        }
+      },
+      "required": [
+        "id",
+        "asset",
+        "start",
+        "sourceIn",
+        "sourceOut",
+        "rate",
+        "gain",
+        "pan"
+      ],
+      "additionalProperties": false
+    },
+    "profile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "fps": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1e+100
+        },
+        "timeMode": {
+          "enum": [
+            "continuousCertified",
+            "sampled"
+          ]
+        },
+        "sampleFPS": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1e+100
+        },
+        "positionErrorPx": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1e+100
+        },
+        "alphaError": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1e+100
+        },
+        "curveErrorPx": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1e+100
+        },
+        "maxDraws": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "maxOpsPerFrame": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "maxSamples": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "maxVariants": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "maxDecodedBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "maxZipBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "benchmarkRef": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "fps",
+        "timeMode",
+        "sampleFPS",
+        "positionErrorPx",
+        "alphaError",
+        "curveErrorPx",
+        "maxDraws",
+        "maxOpsPerFrame",
+        "maxSamples",
+        "maxVariants",
+        "maxDecodedBytes",
+        "maxZipBytes",
+        "benchmarkRef"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

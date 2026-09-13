@@ -1,0 +1,705 @@
+{
+  "abi": "IGRT/1.1",
+  "tables": {
+    "command": [
+      "C_KIND",
+      "C_FIRST",
+      "C_COUNT",
+      "C_GEN",
+      "C_START",
+      "C_END",
+      "C_ISLAND",
+      "C_ORDER"
+    ],
+    "template": [
+      "D_PRIM",
+      "D_PROGRAM",
+      "D_ASSET",
+      "D_PATH",
+      "D_SEQUENCE",
+      "D_VIEW",
+      "D_STROKE",
+      "D_ORDER"
+    ],
+    "island": [
+      "I_SORT"
+    ],
+    "repeater": [
+      "R_KIND",
+      "R_MAX",
+      "R_ORDER"
+    ],
+    "particleSystem": [
+      "PS_FIRST",
+      "PS_COUNT"
+    ],
+    "program": [
+      "P_KIND",
+      "P_FIRST",
+      "P_COUNT",
+      "P_REGS",
+      "P_OUTPUT",
+      "P_OUTCOUNT"
+    ],
+    "instruction": [
+      "O_CODE",
+      "O_DST",
+      "O_FIRST",
+      "O_COUNT",
+      "O_IMM"
+    ],
+    "operand": [
+      "OA_SLOT"
+    ],
+    "shared": [
+      "S_PROGRAM",
+      "S_FIRST",
+      "S_COUNT"
+    ],
+    "view": [
+      "V_PROGRAM"
+    ],
+    "track": [
+      "T_FIRST",
+      "T_COUNT",
+      "T_DEFAULT"
+    ],
+    "key": [
+      "K_TIME",
+      "K_VALUE",
+      "K_EASE"
+    ],
+    "ease": [
+      "E_KIND",
+      "E_PARAM",
+      "E_FIRST",
+      "E_COUNT"
+    ],
+    "easePoint": [
+      "EL_U",
+      "EL_VALUE"
+    ],
+    "path": [
+      "H_KIND",
+      "H_CLOSED",
+      "H_FIRST",
+      "H_COUNT",
+      "H_LENGTH",
+      "H_PROGRAM",
+      "H_CUBICS",
+      "H_SAMPLE_FIRST",
+      "H_SAMPLE_COUNT"
+    ],
+    "pathPoint": [
+      "PV_X",
+      "PV_Y",
+      "PV_S"
+    ],
+    "pathSample": [
+      "HS_SEGMENT",
+      "HS_U"
+    ],
+    "particle": [
+      "PT_BIRTH",
+      "PT_LIFE",
+      "PT_X",
+      "PT_Y",
+      "PT_Z",
+      "PT_VX",
+      "PT_VY",
+      "PT_VZ",
+      "PT_AX",
+      "PT_AY",
+      "PT_AZ",
+      "PT_ROT",
+      "PT_SPIN",
+      "PT_SCALE",
+      "PT_ALPHA",
+      "PT_ASSET",
+      "PT_SCALE_TRACK",
+      "PT_ALPHA_TRACK"
+    ],
+    "asset": [
+      "A_COSTUME",
+      "A_NAME",
+      "A_W",
+      "A_H",
+      "A_CX",
+      "A_CY",
+      "A_RES",
+      "A_UNIT",
+      "A_HASH",
+      "A_MIN_SIZE",
+      "A_MAX_SIZE"
+    ],
+    "sequence": [
+      "Q_FIRST",
+      "Q_COUNT",
+      "Q_DURATION"
+    ],
+    "sequenceFrame": [
+      "QF_TIME",
+      "QF_ASSET"
+    ],
+    "audio": [
+      "AU_SOUND",
+      "AU_NAME",
+      "AU_DURATION"
+    ],
+    "audioEvent": [
+      "AE_TIME",
+      "AE_SOUND",
+      "AE_ORDER"
+    ],
+    "audioCheckpoint": [
+      "AB_TIME",
+      "AB_SOUND"
+    ],
+    "bin": [
+      "B_FIRST",
+      "B_COUNT"
+    ],
+    "binCommand": [
+      "B_COMMAND"
+    ]
+  },
+  "columnTypes": {
+    "C_KIND": "integer",
+    "C_FIRST": "integer",
+    "C_COUNT": "integer",
+    "C_GEN": "integer",
+    "C_START": "number",
+    "C_END": "number",
+    "C_ISLAND": "integer",
+    "C_ORDER": "integer",
+    "D_PRIM": "integer",
+    "D_PROGRAM": "integer",
+    "D_ASSET": "integer",
+    "D_PATH": "integer",
+    "D_SEQUENCE": "integer",
+    "D_VIEW": "integer",
+    "D_STROKE": "integer",
+    "D_ORDER": "integer",
+    "I_SORT": "integer",
+    "R_KIND": "integer",
+    "R_MAX": "integer",
+    "R_ORDER": "integer",
+    "PS_FIRST": "integer",
+    "PS_COUNT": "integer",
+    "P_KIND": "integer",
+    "P_FIRST": "integer",
+    "P_COUNT": "integer",
+    "P_REGS": "integer",
+    "P_OUTPUT": "integer",
+    "P_OUTCOUNT": "integer",
+    "O_CODE": "integer",
+    "O_DST": "integer",
+    "O_FIRST": "integer",
+    "O_COUNT": "integer",
+    "O_IMM": "number",
+    "OA_SLOT": "integer",
+    "S_PROGRAM": "integer",
+    "S_FIRST": "integer",
+    "S_COUNT": "integer",
+    "V_PROGRAM": "integer",
+    "T_FIRST": "integer",
+    "T_COUNT": "integer",
+    "T_DEFAULT": "number",
+    "K_TIME": "number",
+    "K_VALUE": "number",
+    "K_EASE": "integer",
+    "E_KIND": "integer",
+    "E_PARAM": "number",
+    "E_FIRST": "integer",
+    "E_COUNT": "integer",
+    "EL_U": "number",
+    "EL_VALUE": "number",
+    "H_KIND": "integer",
+    "H_CLOSED": "integer",
+    "H_FIRST": "integer",
+    "H_COUNT": "integer",
+    "H_LENGTH": "number",
+    "H_PROGRAM": "integer",
+    "H_CUBICS": "integer",
+    "H_SAMPLE_FIRST": "integer",
+    "H_SAMPLE_COUNT": "integer",
+    "PV_X": "number",
+    "PV_Y": "number",
+    "PV_S": "number",
+    "HS_SEGMENT": "integer",
+    "HS_U": "number",
+    "PT_BIRTH": "number",
+    "PT_LIFE": "number",
+    "PT_X": "number",
+    "PT_Y": "number",
+    "PT_Z": "number",
+    "PT_VX": "number",
+    "PT_VY": "number",
+    "PT_VZ": "number",
+    "PT_AX": "number",
+    "PT_AY": "number",
+    "PT_AZ": "number",
+    "PT_ROT": "number",
+    "PT_SPIN": "number",
+    "PT_SCALE": "number",
+    "PT_ALPHA": "number",
+    "PT_ASSET": "integer",
+    "PT_SCALE_TRACK": "integer",
+    "PT_ALPHA_TRACK": "integer",
+    "A_COSTUME": "integer",
+    "A_NAME": "string",
+    "A_W": "number",
+    "A_H": "number",
+    "A_CX": "number",
+    "A_CY": "number",
+    "A_RES": "integer",
+    "A_UNIT": "number",
+    "A_HASH": "string",
+    "A_MIN_SIZE": "number",
+    "A_MAX_SIZE": "number",
+    "Q_FIRST": "integer",
+    "Q_COUNT": "integer",
+    "Q_DURATION": "number",
+    "QF_TIME": "number",
+    "QF_ASSET": "integer",
+    "AU_SOUND": "integer",
+    "AU_NAME": "string",
+    "AU_DURATION": "number",
+    "AE_TIME": "number",
+    "AE_SOUND": "integer",
+    "AE_ORDER": "integer",
+    "AB_TIME": "number",
+    "AB_SOUND": "integer",
+    "B_FIRST": "integer",
+    "B_COUNT": "integer",
+    "B_COMMAND": "integer"
+  },
+  "header": [
+    {
+      "index": 1,
+      "name": "abi",
+      "type": "string"
+    },
+    {
+      "index": 2,
+      "name": "duration",
+      "type": "number"
+    },
+    {
+      "index": 3,
+      "name": "fps",
+      "type": "number"
+    },
+    {
+      "index": 4,
+      "name": "width",
+      "type": "number"
+    },
+    {
+      "index": 5,
+      "name": "height",
+      "type": "number"
+    },
+    {
+      "index": 6,
+      "name": "fitScale",
+      "type": "number"
+    },
+    {
+      "index": 7,
+      "name": "backgroundRGB",
+      "type": "integer"
+    },
+    {
+      "index": 8,
+      "name": "qualityVersion",
+      "type": "string"
+    },
+    {
+      "index": 9,
+      "name": "moduleMask",
+      "type": "integer"
+    },
+    {
+      "index": 10,
+      "name": "maxDraws",
+      "type": "integer"
+    },
+    {
+      "index": 11,
+      "name": "maxMemCells",
+      "type": "integer"
+    },
+    {
+      "index": 12,
+      "name": "maxFrames",
+      "type": "integer"
+    },
+    {
+      "index": 13,
+      "name": "maxPathSamples",
+      "type": "integer"
+    },
+    {
+      "index": 14,
+      "name": "maxAudioCatchup",
+      "type": "integer"
+    },
+    {
+      "index": 15,
+      "name": "sourceHash",
+      "type": "string"
+    },
+    {
+      "index": 16,
+      "name": "irHash",
+      "type": "string"
+    },
+    {
+      "index": 17,
+      "name": "moduleHash",
+      "type": "string"
+    },
+    {
+      "index": 18,
+      "name": "assetMapHash",
+      "type": "string"
+    },
+    {
+      "index": 19,
+      "name": "sourceEncoding",
+      "type": "string"
+    },
+    {
+      "index": 20,
+      "name": "lastTime",
+      "type": "number"
+    },
+    {
+      "index": 21,
+      "name": "binDuration",
+      "type": "number"
+    },
+    {
+      "index": 22,
+      "name": "sampleFPS",
+      "type": "number"
+    },
+    {
+      "index": 23,
+      "name": "numericLimit",
+      "type": "number"
+    },
+    {
+      "index": 24,
+      "name": "carrierCostume",
+      "type": "integer"
+    }
+  ],
+  "opcodes": [
+    {
+      "code": 0,
+      "name": "CONST",
+      "inputWidths": [],
+      "outputWidth": 1
+    },
+    {
+      "code": 1,
+      "name": "INPUT",
+      "inputWidths": [],
+      "outputWidth": 1
+    },
+    {
+      "code": 2,
+      "name": "SHARED",
+      "inputWidths": [],
+      "outputWidth": 1
+    },
+    {
+      "code": 3,
+      "name": "PARTICLE_FIELD",
+      "inputWidths": [],
+      "outputWidth": 1
+    },
+    {
+      "code": 4,
+      "name": "MOV",
+      "inputWidths": [
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 5,
+      "name": "ADD",
+      "inputWidths": [
+        1,
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 6,
+      "name": "SUB",
+      "inputWidths": [
+        1,
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 7,
+      "name": "MUL",
+      "inputWidths": [
+        1,
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 8,
+      "name": "DIV",
+      "inputWidths": [
+        1,
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 9,
+      "name": "MIN",
+      "inputWidths": [
+        1,
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 10,
+      "name": "MAX",
+      "inputWidths": [
+        1,
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 11,
+      "name": "POW",
+      "inputWidths": [
+        1,
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 12,
+      "name": "ABS",
+      "inputWidths": [
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 13,
+      "name": "FLOOR",
+      "inputWidths": [
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 14,
+      "name": "SQRT",
+      "inputWidths": [
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 15,
+      "name": "SIN",
+      "inputWidths": [
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 16,
+      "name": "COS",
+      "inputWidths": [
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 17,
+      "name": "ATAN2",
+      "inputWidths": [
+        1,
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 18,
+      "name": "MODP",
+      "inputWidths": [
+        1,
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 19,
+      "name": "LT",
+      "inputWidths": [
+        1,
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 20,
+      "name": "LE",
+      "inputWidths": [
+        1,
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 21,
+      "name": "EQ",
+      "inputWidths": [
+        1,
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 22,
+      "name": "SELECT",
+      "inputWidths": [
+        1,
+        1,
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 23,
+      "name": "TRACK",
+      "inputWidths": [
+        1
+      ],
+      "outputWidth": 1
+    },
+    {
+      "code": 24,
+      "name": "MAT_TRS",
+      "inputWidths": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "outputWidth": 6
+    },
+    {
+      "code": 25,
+      "name": "MAT_MUL",
+      "inputWidths": [
+        6,
+        6
+      ],
+      "outputWidth": 6
+    },
+    {
+      "code": 26,
+      "name": "MAT_POINT",
+      "inputWidths": [
+        6,
+        1,
+        1
+      ],
+      "outputWidth": 2
+    },
+    {
+      "code": 27,
+      "name": "PATH_SAMPLE",
+      "inputWidths": [
+        1,
+        1
+      ],
+      "outputWidth": 4
+    },
+    {
+      "code": 28,
+      "name": "PROJECT_MATRIX",
+      "inputWidths": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "outputWidth": 7
+    }
+  ],
+  "modules": {
+    "core": 1,
+    "line": 2,
+    "path": 4,
+    "repeat": 8,
+    "particle": 16,
+    "sequence": 32,
+    "audio": 64
+  },
+  "workLists": {
+    "M": 1,
+    "F": 8,
+    "SH_DATA": 1,
+    "V_DATA": 11,
+    "PX": 1,
+    "PY": 1,
+    "PS": 1,
+    "DL_KIND": 1,
+    "DL_ASSET": 1,
+    "DL_X": 1,
+    "DL_Y": 1,
+    "DL_U": 1,
+    "DL_V": 1,
+    "DL_SIZE": 1,
+    "DL_DIR": 1,
+    "DL_ALPHA": 1,
+    "DL_WIDTH": 1,
+    "DL_RGB": 1,
+    "DL_COLOR": 1,
+    "DL_BRIGHT": 1,
+    "DL_ISLAND": 1,
+    "DL_DEPTH": 1,
+    "DL_COMMAND": 1,
+    "DL_LOCAL": 1,
+    "DL_SEGMENT": 1,
+    "DL_GROUP": 1,
+    "DL_PERM": 1,
+    "DL_SORT_TMP": 1
+  },
+  "drawOutputs": 32,
+  "viewOutputs": 11,
+  "frameStride": 8,
+  "maxListItems": 200000,
+  "numericLimit": 1e+100,
+  "sourceChunkChars": 4096
+}

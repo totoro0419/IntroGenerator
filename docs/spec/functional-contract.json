@@ -1,0 +1,678 @@
+{
+  "version": "IGFUNCTIONS/1.0",
+  "sourceFormat": "IGAUTHOR/1.3",
+  "runtimeABI": "IGRT/1.1",
+  "pdfRequirements": [
+    {
+      "id": "PDF-F01",
+      "feature": "再生・停止・リセット",
+      "sourcePages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "controls": "再生開始、停止、初期状態へ戻す操作",
+      "operation": "再生→停止→先頭へ戻る→再再生",
+      "expected": "停止で映像時刻を固定。リセットで0秒の画面へ戻す。前回の残像・音声イベントを引き継がない。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F02",
+      "feature": "複数の変化を重ねる",
+      "sourcePages": [
+        6,
+        7,
+        8
+      ],
+      "controls": "基準値と追加変化、適用する時間範囲",
+      "operation": "位置の基準値に、登場・揺れ・退場を追加",
+      "expected": "各変化を個別に有効化・無効化・並べ替えできる。1つを削除しても他の変化を編集できる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F03",
+      "feature": "位置・回転・拡大縮小",
+      "sourcePages": [
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        28,
+        29,
+        30
+      ],
+      "controls": "各要素の位置・角度・大きさ",
+      "operation": "位置・回転・幅高さ・基準点を変更",
+      "expected": "全体と内部要素を独立操作できる。非一様Scaleや反転も編集元に保持する。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F04",
+      "feature": "Cameraから独立した表示",
+      "sourcePages": [
+        19,
+        22,
+        23
+      ],
+      "controls": "World／Screenの選択",
+      "operation": "FrameをScreen、TitleをWorldに設定しCameraを動かす",
+      "expected": "Frameは固定、TitleはCameraに追従。設定は保存後も維持される。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F05",
+      "feature": "色相・明暗・透明度",
+      "sourcePages": [
+        24,
+        25,
+        26,
+        28
+      ],
+      "controls": "色相、明暗、透明度",
+      "operation": "色相・明暗・透明度をそれぞれ変更",
+      "expected": "各項目が他の値を上書きしない。透明度0は非表示、1は素材本来の透明度を保つ。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F06",
+      "feature": "彩度を含む色調整",
+      "sourcePages": [
+        24,
+        25,
+        26,
+        107
+      ],
+      "controls": "色相、彩度、明度、透明度",
+      "operation": "線と素材の彩度を落とし、明度を上げる",
+      "expected": "彩度と明度を独立調整できる。静止画化しても元のPaint設定を保持する。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F07",
+      "feature": "表示時間の指定",
+      "sourcePages": [
+        7,
+        27,
+        28
+      ],
+      "controls": "表示開始・終了、片側制限なし",
+      "operation": "表示開始・終了を設定し、その境界へseek",
+      "expected": "開始を含み終了を含まない。指定なしは親の有効範囲を継承。端に欠落Frameを作らない。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F08",
+      "feature": "音楽・BPMに合わせた編集",
+      "sourcePages": [
+        15,
+        31,
+        32,
+        33,
+        34,
+        35,
+        44
+      ],
+      "controls": "秒・拍の編集単位、BPM、区間マーカー",
+      "operation": "2拍固定と1秒固定のKeyを置き、120→60 BPMへ変更",
+      "expected": "2拍固定は1→2秒へ移動。1秒固定は1秒のまま。マーカーの単位も保存する。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F09",
+      "feature": "加減速の種類と強さ",
+      "sourcePages": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43
+      ],
+      "controls": "In／Out／InOut、強さ、振動系の形",
+      "operation": "In/Out/InOutと強さを変更し同区間で比較",
+      "expected": "同じ両端値・区間を保ち、途中の動きだけ変わる。振動・オーバーシュートを編集できる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F10",
+      "feature": "Cameraの移動・回転・Zoom",
+      "sourcePages": [
+        45,
+        46,
+        47,
+        48,
+        49,
+        52,
+        53
+      ],
+      "controls": "Pan、回転、ZoomとそのAnimation",
+      "operation": "CameraのPan・回転・Zoomを同時に変更",
+      "expected": "World全体へ同じCameraが作用する。タイトル単体の拡大とは独立して編集できる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F11",
+      "feature": "Camera Shake",
+      "sourcePages": [
+        49,
+        50,
+        51,
+        52,
+        53
+      ],
+      "controls": "揺れの量、速さ、継続時間、立上り・収束",
+      "operation": "移動・回転・Zoomの揺れを別々に追加",
+      "expected": "量・速さ・開始・収束を調整できる。通常のCamera動作へ重ね、停止やseekで別の揺れへ変わらない。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F12",
+      "feature": "文字全体のAnimation",
+      "sourcePages": [
+        54,
+        55,
+        58,
+        59,
+        60,
+        61
+      ],
+      "controls": "文字全体の位置・回転・大きさ・時間",
+      "operation": "文字列全体を拡大しながら一文字ずつ登場させる",
+      "expected": "全体操作で文字同士の相対配置を保ち、内部の時間差を個別に変更できる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F13",
+      "feature": "文字の柔らかい残像",
+      "sourcePages": [
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61
+      ],
+      "controls": "残像の長さ、強さ、柔らかさ、減衰、鮮明な本体",
+      "operation": "文字に残像を追加し長さ・強さ・柔らかさを変更",
+      "expected": "鮮明な本体を独立表示できる。長さ0では残像が消える。本体を消す設定も保持する。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F14",
+      "feature": "Cameraの動きを含む残像",
+      "sourcePages": [
+        57,
+        58,
+        59,
+        61
+      ],
+      "controls": "Cameraを含む／対象要素の動きだけ",
+      "operation": "Cameraだけを動かし残像のCamera設定を切り替える",
+      "expected": "対象の動きだけの設定では静止対象にCamera由来の残像を作らない。Cameraを含む設定では作る。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F15",
+      "feature": "繰り返し背景",
+      "sourcePages": [
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72
+      ],
+      "controls": "模様、間隔、配置数・範囲、進行方向",
+      "operation": "模様を横・縦・斜めに流し間隔を変更",
+      "expected": "設定した領域を途切れず覆う。速度変更と模様変更を独立して行える。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F16",
+      "feature": "奥行き感のある拡大背景",
+      "sourcePages": [
+        62,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72
+      ],
+      "controls": "連続する模様の拡大、速度、重なり",
+      "operation": "模様を中心から連続拡大しCameraもZoomする",
+      "expected": "繰り返しの継ぎ目で意図しない点滅を起こさない。模様側とCamera側の速度を別々に変更できる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F17",
+      "feature": "音楽区間に応じた背景の緩急",
+      "sourcePages": [
+        63,
+        64,
+        65,
+        66,
+        72
+      ],
+      "controls": "区間ごとの速度・加減速・追加進行",
+      "operation": "音楽の区間ごとに背景の進行速度を変える",
+      "expected": "加減速に加えて基礎の流れを保てる。Sceneを移動しても内部の速度変化は一緒に移る。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F18",
+      "feature": "繰り返し要素の見た目の変化",
+      "sourcePages": [
+        70,
+        72,
+        79,
+        81
+      ],
+      "controls": "交互の色・Asset・大きさ等",
+      "operation": "2色・2素材の交互配置を3種類へ変更",
+      "expected": "色・素材・大きさを独立指定できる。Compilerによる素材統合後も元の選択肢を編集できる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F19",
+      "feature": "連続して飛び出すParticle",
+      "sourcePages": [
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81
+      ],
+      "controls": "発生間隔・量、広がり、速度、回転、見た目",
+      "operation": "連続発生とBurstを併用し、速度・角度・寿命を変える",
+      "expected": "発生後の粒子が現在のEmitter位置へ戻らない。放射の速さと発生量を別々に調整できる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F20",
+      "feature": "偏りの少ない粒子配置",
+      "sourcePages": [
+        77,
+        78,
+        79,
+        81
+      ],
+      "controls": "分布とSeed、規則性",
+      "operation": "同じSeedで粒子の分布をランダム／分散配置へ変更",
+      "expected": "偏りを抑えた広がりを選べる。seekで配置は変わらず、Seed変更は明示操作で行う。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F21",
+      "feature": "連番Effect",
+      "sourcePages": [
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90
+      ],
+      "controls": "素材列、開始位置、再生速度、表示範囲、Transform・色",
+      "operation": "複数画像を連番へ登録し順序・表示時間・速度を変更",
+      "expected": "先頭から最終素材まで選べる。素材名変更や重複排除でフレーム参照が変わらない。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F22",
+      "feature": "同じEffectを複数方向へ配置",
+      "sourcePages": [
+        84,
+        87,
+        90
+      ],
+      "controls": "個数、角度範囲、向き、位置",
+      "operation": "同じ連番Effectを同位置から異なる角度へ複製",
+      "expected": "角度・個数・内部再生速度を独立調整できる。元Effectの編集を複製へ反映できる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F23",
+      "feature": "Effectの影・本体を分離",
+      "sourcePages": [
+        86,
+        88,
+        89,
+        90,
+        91,
+        93,
+        113,
+        114,
+        115
+      ],
+      "controls": "影の位置・濃さ・色、影をまとめて背面にする設定",
+      "operation": "複数Effectへ影を付け、全ての影を背面へ設定",
+      "expected": "影A・影B・本体A・本体Bの順を維持。各影の色・濃さ・位置を個別変更できる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F24",
+      "feature": "自由な制御点で曲線作成",
+      "sourcePages": [
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100
+      ],
+      "controls": "制御点の追加・削除・移動、座標入力",
+      "operation": "5点のBezierを8点へ増やして制御点を移動",
+      "expected": "制御点列を編集元に保持。4点制限や400点の編集モデルへ置き換えない。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F25",
+      "feature": "座標列から曲線を取り込む",
+      "sourcePages": [
+        94,
+        95,
+        100
+      ],
+      "controls": "座標の貼り付け／入力",
+      "operation": "座標列を貼り付け、取り込んだ点を画面で移動",
+      "expected": "成功時は一括のUndo操作。不正な途中空欄・奇数個の座標は位置を示し、既存Pathを変更しない。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F26",
+      "feature": "複数の独立した曲線",
+      "sourcePages": [
+        99,
+        100,
+        103,
+        106
+      ],
+      "controls": "各曲線の選択・形・時間・スタイル",
+      "operation": "2本の曲線の片方だけ形と時間を変える",
+      "expected": "選んだ曲線だけが変わる。Groupへまとめた後も各曲線を独立編集できる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F27",
+      "feature": "曲線の描き出し・消去・流れる区間",
+      "sourcePages": [
+        101,
+        102,
+        103,
+        104,
+        109,
+        111,
+        112
+      ],
+      "controls": "進行位置、表示長、速度、表示時間",
+      "operation": "短い表示区間を曲線上へ流し、その長さを変える",
+      "expected": "進行位置と長さが独立する。全長表示、描き出し、後方からの消去も作れる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F28",
+      "feature": "曲線端の装飾",
+      "sourcePages": [
+        105,
+        106,
+        108,
+        109
+      ],
+      "controls": "端点Asset、サイズ、角度、接線追従",
+      "operation": "表示区間の両端へ素材を置き、接線追従を切り替える",
+      "expected": "実際に表示中の両端へ追従。表示区間が空なら装飾も消える。線幅と装飾サイズは独立。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F29",
+      "feature": "曲線に沿うGlow・影",
+      "sourcePages": [
+        108,
+        110,
+        111,
+        112
+      ],
+      "controls": "Asset、幅、濃さ、密度、配置範囲",
+      "operation": "曲線沿いに柔らかい光を配置し幅・濃さ・密度を変える",
+      "expected": "線本体、光、影を独立調整できる。光だけ表示でき、表示区間にも追従する。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F30",
+      "feature": "線の色・太さとCamera連動",
+      "sourcePages": [
+        107,
+        108,
+        109
+      ],
+      "controls": "線色、彩度、明度、太さ、Camera連動",
+      "operation": "線幅をWorld連動／Screen固定に切り替えてZoom",
+      "expected": "前者はCameraと一緒に太くなり、後者は画面上の太さを保つ。色と太さも個別にAnimationできる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F31",
+      "feature": "対称配置・反対側への複製",
+      "sourcePages": [
+        108,
+        109,
+        111,
+        112,
+        115
+      ],
+      "controls": "対称中心、軸・点対称、内容の向きを保つか",
+      "operation": "曲線を軸対称・点対称にし、端点素材の向きを切り替える",
+      "expected": "元曲線の編集が両側へ反映。配置の反転と素材自体の反転を区別して設定できる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "PDF-F32",
+      "feature": "全要素の重なり順",
+      "sourcePages": [
+        60,
+        71,
+        80,
+        89,
+        91,
+        93,
+        113,
+        114,
+        115
+      ],
+      "controls": "背景・粒子・影・Effect本体・文字の順序",
+      "operation": "背景・粒子・影・Effect・文字を並べ替える",
+      "expected": "ScratchとWebで同じ重なりを維持。局所Bakeを行っても他のレイヤーを追い越さない。",
+      "status": "specified_not_product_tested"
+    }
+  ],
+  "originalRequirements": [
+    {
+      "id": "REQ-01",
+      "feature": "Group・Composition・Scene",
+      "controls": "入れ子、再利用、内部編集、全体Transform、内部Local Time",
+      "designSections": "2–4",
+      "acceptance": "入れ子を3段以上作り、外側と最内側を同時Animationして保存する。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-02",
+      "feature": "文字の内部編集",
+      "controls": "Line/Word/Character/Glyph、Kerning、Stagger、Wave、Random delay",
+      "designSections": "5",
+      "acceptance": "TTROの4文字を個別登場させ、単語・行・全体のAnimationを重ねる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-03",
+      "feature": "文字の装飾",
+      "controls": "太字、筆記体、縁取り、影、押し出し、Glow、Gradient",
+      "designSections": "5、10、16",
+      "acceptance": "Font変更後も装飾と内部Animatorの編集を続けられる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-04",
+      "feature": "標準Shape",
+      "controls": "Circle/Rectangle/Triangle/Diamond/Polygon/Star/Arrow/Chevron/Ring/Arc/Frame/Bracket/Crosshair/Target/Burst/Spark/Shard/Blob/Petal/Bar/Dot",
+      "designSections": "6、10",
+      "acceptance": "寸法・厚み・角度・色を変更し、Arcの表示角度をAnimationする。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-05",
+      "feature": "複合模様",
+      "controls": "同心円、分割Ring、Radial Line、HUD、Grid、Dot、Halftone",
+      "designSections": "6–7",
+      "acceptance": "Patternを保ったまま間隔・密度・サイズ・色を変更する。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-06",
+      "feature": "Repeater",
+      "controls": "Linear/Radial/Grid/Path、各要素の位置・角度・Scale・Opacity・色・時間差",
+      "designSections": "7",
+      "acceptance": "32本のLineの全体回転と各Lineの時間差Scale、Camera Zoomを併用する。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-07",
+      "feature": "Scatterと粒子",
+      "controls": "Shard/Burst/Confetti/Spark、Seed、発生量、寿命、速度、加速度、見た目",
+      "designSections": "7",
+      "acceptance": "100粒子と移動Emitterをseekし、同じ時刻の同じ状態を再現する。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-08",
+      "feature": "連続背景",
+      "controls": "横・縦・斜め、模様、Grid、画像背景、Tunnel",
+      "designSections": "7、9",
+      "acceptance": "斜め背景、Screen Frame、World Title、Camera Shakeを同時に使う。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-09",
+      "feature": "曲線と追従",
+      "controls": "Bezier/Spline、描画進行、接線追従、Path Repeater",
+      "designSections": "8",
+      "acceptance": "制御点を動かしながら光点と装飾を進ませる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-10",
+      "feature": "Ribbon・Trail・Light Streak",
+      "controls": "幅・濃さ・Taper・Glow、現在の形を追う／過去の軌跡を残す",
+      "designSections": "8",
+      "acceptance": "動的Pathで2種類のTrailの見え方を切り替える。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-11",
+      "feature": "Cameraと2.5D",
+      "controls": "Pan/Zoom/Rotation/Shake/Z/Perspective/Parallax/Tunnel",
+      "designSections": "9",
+      "acceptance": "奥行きの異なるRingを動かし、Screen Graphicは固定する。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-12",
+      "feature": "複数画面・局所View",
+      "controls": "Split Screen、固定Graphic、Composition内部の独立Camera",
+      "designSections": "2–3、9",
+      "acceptance": "2つのViewで同じ構成を別のCameraから表示する。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-13",
+      "feature": "時間編集",
+      "controls": "Keyframe、全標準Easing、Bezier easing、Loop/Ping-pong、Offset/Scale/Phase",
+      "designSections": "4",
+      "acceptance": "逆方向seek、Scene移動、Loop境界でも内容を保持する。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-14",
+      "feature": "SceneとTransition",
+      "controls": "複数Scene、重なり、Fade、Slide、Mask/Revealによる切り替え",
+      "designSections": "2、4、16",
+      "acceptance": "Scene Aの退場とBの登場を重ね、どちらの内容も再編集できる。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-15",
+      "feature": "画像Effect",
+      "controls": "Glow/Shadow/Blur/Gradient/Motion Blur/Mask/Reveal/Flash",
+      "designSections": "5、10、16",
+      "acceptance": "複数Effectの順序を変え、保存後も順序を編集する。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-16",
+      "feature": "連番と複雑な合成",
+      "controls": "連番再生、局所Baked Clip、複雑なText+Mask+Blur+Warp",
+      "designSections": "10、14–16",
+      "acceptance": "必要部分を出力時にBakeしても、元の文字・Mask・Warpを再編集する。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-17",
+      "feature": "音楽とSFX",
+      "controls": "BPM編集、Premix、開始・停止、区間再生、Frame skip時のイベント",
+      "designSections": "13–14",
+      "acceptance": "映像seekと音声の開始可能位置を区別し、停止後の二重発火を防ぐ。",
+      "status": "specified_not_product_tested"
+    },
+    {
+      "id": "REQ-18",
+      "feature": "同じsb3で2つの再生環境",
+      "controls": "Scratch標準機能、独立Web再生、編集元保持、再出力",
+      "designSections": "1、11–14、18",
+      "acceptance": "同じ出力を両環境で再生し、Scratch保存後にWebで再読込する。",
+      "status": "specified_not_product_tested"
+    }
+  ],
+  "commonGates": [
+    "edit",
+    "undoRedo",
+    "saveReload",
+    "compile",
+    "scratchPlayback",
+    "independentWebPlayback",
+    "seek",
+    "layerOrder"
+  ],
+  "productAcceptanceExecuted": false
+}

@@ -1,0 +1,5 @@
+# UI decisions
+
+UI Implementation Qualityスキルを適用。明るい編集パネル、暗いPreview、Amberの主要書出しボタンを採用。レイヤー・Preview・Inspector・Timelineの役割を分離し、狭い画面ではパネル切替を使う。入力はラベル付きのnative control、通知はaria-live、dialogとキーボードの基本操作を用意。
+
+Superdesignは起動時の未確認テレメトリーが自動承認レビューで拒否されたため使用を停止し、外部生成物を取得していない。代替スキルによるローカル実装であり、Superdesign生成済みと表示しない。

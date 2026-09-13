@@ -1,0 +1,1351 @@
+{
+  "type": "object",
+  "properties": {
+    "abi": {
+      "enum": [
+        "IGRT/1.1"
+      ]
+    },
+    "lists": {
+      "type": "object",
+      "properties": {
+        "C_KIND": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "C_FIRST": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "C_COUNT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "C_GEN": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "C_START": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "C_END": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "C_ISLAND": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "C_ORDER": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "D_PRIM": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "D_PROGRAM": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "D_ASSET": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "D_PATH": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "D_SEQUENCE": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "D_VIEW": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "D_STROKE": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "D_ORDER": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "I_SORT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "R_KIND": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "R_MAX": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "R_ORDER": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PS_FIRST": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PS_COUNT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "P_KIND": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "P_FIRST": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "P_COUNT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "P_REGS": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "P_OUTPUT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "P_OUTCOUNT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "O_CODE": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "O_DST": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "O_FIRST": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "O_COUNT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "O_IMM": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "OA_SLOT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "S_PROGRAM": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "S_FIRST": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "S_COUNT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "V_PROGRAM": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "T_FIRST": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "T_COUNT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "T_DEFAULT": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "K_TIME": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "K_VALUE": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "K_EASE": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "E_KIND": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "E_PARAM": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "E_FIRST": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "E_COUNT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "EL_U": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "EL_VALUE": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "H_KIND": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "H_CLOSED": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "H_FIRST": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "H_COUNT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "H_LENGTH": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "H_PROGRAM": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "H_CUBICS": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "H_SAMPLE_FIRST": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "H_SAMPLE_COUNT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PV_X": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PV_Y": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PV_S": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "HS_SEGMENT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "HS_U": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_BIRTH": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_LIFE": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_X": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_Y": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_Z": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_VX": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_VY": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_VZ": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_AX": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_AY": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_AZ": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_ROT": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_SPIN": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_SCALE": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_ALPHA": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_ASSET": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_SCALE_TRACK": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "PT_ALPHA_TRACK": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "A_COSTUME": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "A_NAME": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "A_W": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "A_H": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "A_CX": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "A_CY": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "A_RES": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "A_UNIT": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "A_HASH": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "A_MIN_SIZE": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "A_MAX_SIZE": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "Q_FIRST": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "Q_COUNT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "Q_DURATION": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "QF_TIME": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "QF_ASSET": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "AU_SOUND": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "AU_NAME": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "AU_DURATION": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "AE_TIME": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "AE_SOUND": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "AE_ORDER": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "AB_TIME": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1e+100,
+            "maximum": 1e+100
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "AB_SOUND": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "B_FIRST": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "B_COUNT": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "B_COMMAND": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "IG_HEADER": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            },
+            {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            },
+            {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            },
+            {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            },
+            {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            },
+            {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            },
+            {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            },
+            {
+              "type": "number",
+              "minimum": -1e+100,
+              "maximum": 1e+100
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          ],
+          "items": false,
+          "minItems": 24,
+          "maxItems": 24
+        },
+        "IG_SOURCE": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 0,
+          "maxItems": 200000
+        },
+        "IG_MODULE": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "maxItems": 7
+        }
+      },
+      "required": [
+        "C_KIND",
+        "C_FIRST",
+        "C_COUNT",
+        "C_GEN",
+        "C_START",
+        "C_END",
+        "C_ISLAND",
+        "C_ORDER",
+        "D_PRIM",
+        "D_PROGRAM",
+        "D_ASSET",
+        "D_PATH",
+        "D_SEQUENCE",
+        "D_VIEW",
+        "D_STROKE",
+        "D_ORDER",
+        "I_SORT",
+        "R_KIND",
+        "R_MAX",
+        "R_ORDER",
+        "PS_FIRST",
+        "PS_COUNT",
+        "P_KIND",
+        "P_FIRST",
+        "P_COUNT",
+        "P_REGS",
+        "P_OUTPUT",
+        "P_OUTCOUNT",
+        "O_CODE",
+        "O_DST",
+        "O_FIRST",
+        "O_COUNT",
+        "O_IMM",
+        "OA_SLOT",
+        "S_PROGRAM",
+        "S_FIRST",
+        "S_COUNT",
+        "V_PROGRAM",
+        "T_FIRST",
+        "T_COUNT",
+        "T_DEFAULT",
+        "K_TIME",
+        "K_VALUE",
+        "K_EASE",
+        "E_KIND",
+        "E_PARAM",
+        "E_FIRST",
+        "E_COUNT",
+        "EL_U",
+        "EL_VALUE",
+        "H_KIND",
+        "H_CLOSED",
+        "H_FIRST",
+        "H_COUNT",
+        "H_LENGTH",
+        "H_PROGRAM",
+        "H_CUBICS",
+        "H_SAMPLE_FIRST",
+        "H_SAMPLE_COUNT",
+        "PV_X",
+        "PV_Y",
+        "PV_S",
+        "HS_SEGMENT",
+        "HS_U",
+        "PT_BIRTH",
+        "PT_LIFE",
+        "PT_X",
+        "PT_Y",
+        "PT_Z",
+        "PT_VX",
+        "PT_VY",
+        "PT_VZ",
+        "PT_AX",
+        "PT_AY",
+        "PT_AZ",
+        "PT_ROT",
+        "PT_SPIN",
+        "PT_SCALE",
+        "PT_ALPHA",
+        "PT_ASSET",
+        "PT_SCALE_TRACK",
+        "PT_ALPHA_TRACK",
+        "A_COSTUME",
+        "A_NAME",
+        "A_W",
+        "A_H",
+        "A_CX",
+        "A_CY",
+        "A_RES",
+        "A_UNIT",
+        "A_HASH",
+        "A_MIN_SIZE",
+        "A_MAX_SIZE",
+        "Q_FIRST",
+        "Q_COUNT",
+        "Q_DURATION",
+        "QF_TIME",
+        "QF_ASSET",
+        "AU_SOUND",
+        "AU_NAME",
+        "AU_DURATION",
+        "AE_TIME",
+        "AE_SOUND",
+        "AE_ORDER",
+        "AB_TIME",
+        "AB_SOUND",
+        "B_FIRST",
+        "B_COUNT",
+        "B_COMMAND",
+        "IG_HEADER",
+        "IG_SOURCE",
+        "IG_MODULE"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "abi",
+    "lists"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:introgenerator:runtime-lists:1.1"
+}
