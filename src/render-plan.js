@@ -1,3 +1,4 @@
+import {transformPixels} from './colors.js';
 import {b64,utf8,loadImage,hashObject} from './assets.js';
 import {I,point,mul,clamp} from './math.js';
 const cache=new Map();
@@ -20,6 +21,6 @@ async function render(plan){const out=surface(plan.bounds),ctx=context(out);if(p
  if(e.kind==='clip'){ctx.save();ctx.beginPath();ctx.rect(...e.rect);ctx.clip();draw(ctx,src);ctx.restore();return out}
  if(e.kind==='blur'){ctx.filter=`blur(${Math.max(0,e.sigma)*2}px)`;draw(ctx,src);return out}
  if(['shadow','glow','extrude'].includes(e.kind)){const tinted=surface(src.bounds),tc=context(tinted);draw(tc,src);tc.globalCompositeOperation='source-in';tc.fillStyle=`rgba(${e.rgba.slice(0,3).map(x=>clamp(x)*255).join(',')},${clamp(e.rgba[3])})`;tc.fillRect(...tinted.bounds);const steps=e.kind==='extrude'?Math.min(512,e.steps):1;ctx.filter=`blur(${Math.max(0,e.sigma||0)*2}px)`;for(let i=steps;i>=1;i--){const k=e.kind==='extrude'?i/Math.max(1,steps):1;draw(ctx,tinted,[1,0,0,1,e.offset[0]*k,e.offset[1]*k],1,e.blend||'sourceOver')}ctx.filter='none';if(e.includeBase!==false)draw(ctx,src);return out}
- draw(ctx,src);if(e.kind==='flash'){ctx.globalCompositeOperation='source-atop';ctx.fillStyle=`rgba(${e.rgba.slice(0,3).map(x=>clamp(x)*255).join(',')},${clamp(e.rgba[3])})`;ctx.fillRect(...out.bounds)}return out;
+ draw(ctx,src);if(e.kind==='color'){const pixels=ctx.getImageData(0,0,out.canvas.width,out.canvas.height);transformPixels(pixels.data,e.hue,e.brightness);ctx.putImageData(pixels,0,0)}if(e.kind==='flash'){ctx.globalCompositeOperation='source-atop';ctx.fillStyle=`rgba(${e.rgba.slice(0,3).map(x=>clamp(x)*255).join(',')},${clamp(e.rgba[3])})`;ctx.fillRect(...out.bounds)}return out;
 }
 export function renderPlan(plan){const key=hashObject(plan);if(!cache.has(key)){const p=render(plan);cache.set(key,p);p.catch(()=>cache.delete(key));if(cache.size>128)cache.delete(cache.keys().next().value)}return cache.get(key)}

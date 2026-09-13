@@ -21,6 +21,6 @@ export function validateRuntime(L) {
   }for(let r=1;r<=32;r++)if(!assigned.has(r))fail('未定義出力');
  }
  for(let i=0;i<L.C_KIND.length;i++)if(L.C_KIND[i]!==0||!range(L.C_FIRST[i],L.C_COUNT[i],L.D_PRIM.length)||L.C_START[i]>L.C_END[i])fail('Command');
- for(let i=0;i<L.D_PRIM.length;i++)if(L.D_PRIM[i]!==1||!int(L.D_PROGRAM[i],1,L.P_FIRST.length)||!int(L.D_ASSET[i],1,L.A_NAME.length))fail('Template');
+ for(let i=0;i<L.D_PRIM.length;i++)if(![1,2].includes(L.D_PRIM[i])||!int(L.D_PROGRAM[i],1,L.P_FIRST.length)||(L.D_PRIM[i]===1?!int(L.D_ASSET[i],1,L.A_NAME.length):L.D_ASSET[i]!==0))fail('Template');
  return true;
 }
