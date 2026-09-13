@@ -22,3 +22,4 @@ export function beats(tempo,x){if(x<0)return x*60/tempo[0].bpm;let s=0;for(let i
 export const rgbInt=c=>Math.round(clamp(c[0])*255)*65536+Math.round(clamp(c[1])*255)*256+Math.round(clamp(c[2])*255);
 export const hex=c=>'#'+rgbInt(c).toString(16).padStart(6,'0');
 export const fromHex=s=>[parseInt(s.slice(1,3),16)/255,parseInt(s.slice(3,5),16)/255,parseInt(s.slice(5,7),16)/255,1];
+export function inverse(m){const d=m[0]*m[3]-m[1]*m[2];if(Math.abs(d)<1e-12)return null;return [m[3]/d,-m[1]/d,-m[2]/d,m[0]/d,(m[2]*m[5]-m[3]*m[4])/d,(m[1]*m[4]-m[0]*m[5])/d]}

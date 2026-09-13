@@ -1,7 +1,7 @@
 name: Build and deploy IntroGenerator
 on:
   push:
-    branches: [main]
+    branches: [main, feat/full-v1]
   workflow_dispatch:
 permissions:
   contents: read
@@ -27,6 +27,7 @@ jobs:
         run: |
           npx vite --host 127.0.0.1 > /tmp/vite.log 2>&1 &
           node tests/browser-smoke.mjs
+          node tests/features-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -39,6 +40,7 @@ jobs:
         with:
           path: dist
   deploy:
+    if: github.ref == 'refs/heads/main'
     needs: build
     environment:
       name: github-pages
