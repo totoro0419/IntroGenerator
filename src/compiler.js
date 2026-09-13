@@ -21,6 +21,10 @@ export async function compile(source,onProgress=()=>{},signal){validateSource(so
  for(let f=0;f<frames;f++){if(signal?.aborted)throw Error('キャンセルしました');const leaves=author.frame(times[f]);if(leaves.length>p.profile.maxDraws)throw Error('描画数の予算を超えています');for(let leaf of leaves){let m=leaf.m,s=Math.hypot(m[0],m[1]),theta=Math.atan2(m[1],m[0]),body=leaf.body,bounds=leaf.bounds;if(s<1e-10||leaf.alpha<=0)continue;
  let c=Math.cos(theta),sn=Math.sin(theta),h=[(c*m[0]+sn*m[1])/s,(-sn*m[0]+c*m[1])/s,(c*m[2]+sn*m[3])/s,(-sn*m[2]+c*m[3])/s,0,0];
  if(Math.abs(h[2])+Math.abs(h[1])+Math.abs(h[3]-1)>1e-7){h=h.map(x=>+x.toFixed(6));body=`<g transform="matrix(${h.join(' ')})">${body}</g>`;let [x,y,w,hh]=bounds,ps=[[x,y],[x+w,y],[x+w,y+hh],[x,y+hh]].map(p=>point(h,p)),xs=ps.map(p=>p[0]),ys=ps.map(p=>p[1]);bounds=[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)]}
+ // Fold uniform scale into only the asset variants outside Scratch's size limits.
+ const stageFit=p.fit==='contain'?Math.min(480/p.width,360/p.height):Math.max(480/p.width,360/p.height);
+ const minScale=Math.min(1,Math.max(5/bounds[2],5/bounds[3])),maxScale=Math.min(720/bounds[2],540/bounds[3]);
+ if(s*stageFit<minScale||s*stageFit>maxScale){body=`<g transform="scale(${s})">${body}</g>`;bounds=bounds.map(v=>v*s);s=1}
  let aid=assets.put(body,bounds,leaf.needsRaster),v=[...base];v.splice(0,6,...trs(m[4],m[5],s,s,theta*180/Math.PI));v[6]=leaf.z;v[7]=clamp(leaf.alpha);v[10]=leaf.color||0;v[11]=leaf.brightness||0;v[12]=aid;
  let entry=map.get(leaf.key);if(!entry){entry={key:leaf.key,order:leaf.order,nodeId:leaf.nodeId,values:new Map(),asset:aid};map.set(leaf.key,entry)}entry.values.set(f,v)}
  if(f%8===0){onProgress(f/frames*.7);await new Promise(r=>setTimeout(r,0))}}

@@ -15,7 +15,7 @@
 | Effect | 局所Glow/Shadow/Blur、Temporal Echo | 隔離Group、Mask、Warp、合成mode、Motion Blur積分、対称効果の細部 |
 | Baked Clip | 連番素材の読込 | 自動Fallback境界選択、複雑な合成の自動Bake |
 | Audio | Sourceに保持、出力は明示拒否 | BGM/SFX・Seek同期・イベント走査 |
-| Scratch Runtime | 汎用My Blocks + Lists + Stamp | LINE/PATH、残Opcode、公式RendererのSize/Fence対策、Prepare/Commit、性能予算 |
+| Scratch Runtime | 汎用My Blocks + Lists + Stamp | LINE/PATH、残Opcode、公式RendererのFence対策・Size対策の実機検証、Prepare/Commit、性能予算 |
 | sb3 import/export | Source/IR/Module/Assetの検査 | 完全ABIの入力対応、Scratch本体のroundtrip |
 | 編集UI | Layer/Inspector/Timeline、JSON、画像/Font、Undo | Canvas上の移動、複数選択、keyframe/clipの直接Drag、全機能のUI接続 |
 
@@ -27,7 +27,7 @@ GitHub Actionsのブラウザ確認は起動・再生・sb3往復のDraw List一
 
 ## 公式実装の確認
 
-Scratch VM `rendered-target.js` のsetSizeはcostumeサイズに基づく上下限を適用し、setXYはrendererのfencingを通ります。これを無視した極端なscaleやStage端でWebとの差が残るため、完全互換の判定は保留しています。
+Scratch VM `rendered-target.js` のsetSizeはcostumeサイズに基づく上下限を適用し、setXYはrendererのfencingを通ります。Size範囲外のuniform scaleは局所assetへ折り込みます。Stage端のfencingなどでWebとの差が残るため、完全互換の判定は保留しています。
 
 - https://github.com/scratchfoundation/scratch-vm/blob/develop/src/sprites/rendered-target.js
 - https://github.com/scratchfoundation/scratch-vm/blob/develop/src/extensions/scratch3_pen/index.js
