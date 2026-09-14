@@ -27,6 +27,12 @@ function referencedTracks(root,p){
  walk(root);return out
 }
 
+function nestedTrackBinding(binding,p){
+ const exps=new Map(p.expressions.map(e=>[e.id,e])),seen=new Set();
+ const walk=b=>{if(!b||typeof b!=='object'||typeof b.expr!=='string'||seen.has(b.expr))return null;seen.add(b.expr);const e=exps.get(b.expr);if(!e)return null;if(e.op==='track')return b;for(const a of e.args||[]){const found=walk(a);if(found)return found}return null};
+ return walk(binding)
+}
+
 function matchingTrack(){
  const s=state(),root=selected(),rows=all('#keys > tr').filter(r=>r.querySelector('select[aria-label="時間単位"]'));if(!s?.p||!root||!rows.length)return null;
  const refs=referencedTracks(root,s.p),near=(a,b)=>Math.abs(a-b)<1e-6,pool=refs.size?s.p.tracks.filter(t=>refs.has(t.id)):s.p.tracks;
@@ -58,6 +64,19 @@ async function addKey(){
   await persist(s.p);reopenKeyDialog(label);window.__IG.rebuild().catch(e=>status(e.message,true))
  }catch(e){s.p=previous;status(e.message,true);$('.layer.selected .name')?.click()}
 }
+
+// The legacy dialog recognizes only a direct Track binding. F17 keeps the continuous base
+// flow as add(base, track), so briefly expose its existing nested Track while reopening the
+// Scroll X dialog. The authoring graph is restored before any asynchronous observer runs.
+document.addEventListener('click',e=>{
+ const button=e.target.closest?.('.key-button');
+ if(!button||button.getAttribute('aria-label')!=='スクロール Xのキーフレーム')return;
+ const s=state(),node=selected(),outer=node?.data?.scroll?.[0];if(!s?.p||!outer?.expr)return;
+ const direct=s.p.expressions.find(x=>x.id===outer.expr);if(direct?.op==='track')return;
+ const trackBinding=nestedTrackBinding(outer,s.p);if(!trackBinding)return;
+ node.data.scroll[0]=trackBinding;
+ queueMicrotask(()=>{if(node.data.scroll[0]===trackBinding)node.data.scroll[0]=outer})
+},true);
 
 // Capture globally so an immediate click after the dialog opens cannot race a MutationObserver.
 document.addEventListener('click',e=>{
