@@ -4,20 +4,23 @@ import {compileAudio} from './audio.js';
 import {validateTiming} from './model.js';
 import Ajv from 'ajv/dist/2020.js';
 import schema from '../schemas/authoring.schema.json';
+import easingStackSchema from '../schemas/easing-stack.schema.json';
 import ABI from '../schemas/runtime-abi.json';
 import {AssetStore,hashObject,b64} from './assets.js';
 import {AuthorEvaluator} from './author.js';
 import {I,trs,point,clamp,rgbInt} from './math.js';
+import {migrateEasingSource,legacyValidationView,assertEasingStackSemantics} from './easing-stack.js';
 import {gzipSync,strToU8} from 'fflate';
-const validate=new Ajv({strict:false,allErrors:false}).compile(schema);
+const ajv=new Ajv({strict:false,allErrors:false}),validate=ajv.compile(schema),validateStack=ajv.compile(easingStackSchema);
 export function validateSource(p){
- if(!validate(p))throw Error('編集データが仕様と一致しません: '+validate.errors[0].instancePath+' '+validate.errors[0].message);
+ migrateEasingSource(p);const legacy=legacyValidationView(p);
+ if(!validate(legacy))throw Error('編集データが仕様と一致しません: '+validate.errors[0].instancePath+' '+validate.errors[0].message);
+ assertEasingStackSemantics(p,validateStack);
  const nodes=new Map();for(const n of p.nodes){if(nodes.has(n.id))throw Error('Node IDの重複');nodes.set(n.id,n)}
  if(!nodes.has(p.root)||nodes.get(p.root).parent!==null)throw Error('Root参照が不正です');
  for(const n of p.nodes){if(new Set(n.children).size!==n.children.length)throw Error('Child参照の重複');for(const id of n.children){const c=nodes.get(id);if(!c||c.parent!==n.id)throw Error('親子参照が一致しません')}if(n.parent!==null&&!nodes.get(n.parent)?.children.includes(n.id))throw Error('親参照が一致しません')}
  const done=new Set();for(const n of p.nodes){let cur=n,seen=new Set();while(cur&&!done.has(cur.id)){if(seen.has(cur.id))throw Error('Groupの親子関係が循環しています');seen.add(cur.id);cur=nodes.get(cur.parent)}for(const id of seen)done.add(id)}
- validateTiming(p);
- return true
+ validateTiming(p);return true
 }
 export const row=(L,table,values)=>{ABI.tables[table].forEach((k,i)=>L[k].push(values[i]));return L[ABI.tables[table][0]].length};
 export function nextDown(x){let b=new ArrayBuffer(8),v=new DataView(b);v.setFloat64(0,x);v.setBigUint64(0,v.getBigUint64(0)-1n);return v.getFloat64(0)}
@@ -26,8 +29,6 @@ export async function compile(source,onProgress=()=>{},signal){validateSource(so
  for(let f=0;f<frames;f++){if(signal?.aborted)throw Error('キャンセルしました');const leaves=author.frame(times[f]);if(leaves.length>p.profile.maxDraws)throw Error('描画数の予算を超えています');for(let leaf of leaves){
  const fit=p.fit==='contain'?Math.min(480/p.width,360/p.height):Math.max(480/p.width,360/p.height),visible=[-240/fit,-180/fit,480/fit,360/fit],sb=transformedBounds(leaf.bounds,leaf.m);
  if(sb[0]>visible[0]+visible[2]||sb[1]>visible[1]+visible[3]||sb[0]+sb[2]<visible[0]||sb[1]+sb[3]<visible[1])continue;
- // Position fencing still needs a local crop. Size clamping is handled below by
- // folding uniform scale into the asset, avoiding one full-frame asset per Camera frame.
  if(!leaf.penPath&&(Math.abs(leaf.m[4]*fit)>650||Math.abs(leaf.m[5]*fit)>590)){
   const plan=effectPlan(groupPlan([{plan:leaf.plan||svgPlan(leaf.body,leaf.bounds),m:leaf.m,alpha:1,blend:'source-over'}]),{kind:'clip',rect:visible});
   leaf={...leaf,plan,body:'',bounds:plan.bounds,m:I,needsRaster:false};
@@ -37,7 +38,6 @@ export async function compile(source,onProgress=()=>{},signal){validateSource(so
  let m=leaf.m,s=Math.hypot(m[0],m[1]),theta=Math.atan2(m[1],m[0]),body=leaf.body,bounds=leaf.bounds,plan=leaf.plan;if(s<1e-10||leaf.alpha<=0)continue;
  let c=Math.cos(theta),sn=Math.sin(theta),h=[(c*m[0]+sn*m[1])/s,(-sn*m[0]+c*m[1])/s,(c*m[2]+sn*m[3])/s,(-sn*m[2]+c*m[3])/s,0,0];
  if(Math.abs(h[2])+Math.abs(h[1])+Math.abs(h[3]-1)>1e-7){h=h.map(x=>+x.toFixed(6));if(plan)plan=groupPlan([{plan,m:h,alpha:1,blend:'source-over'}]);body=`<g transform="matrix(${h.join(' ')})">${body}</g>`;let [x,y,w,hh]=bounds,ps=[[x,y],[x+w,y],[x+w,y+hh],[x,y+hh]].map(p=>point(h,p)),xs=ps.map(p=>p[0]),ys=ps.map(p=>p[1]);bounds=[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)]}
- // Fold uniform scale into only the asset variants outside Scratch's size limits.
  const stageFit=p.fit==='contain'?Math.min(480/p.width,360/p.height):Math.max(480/p.width,360/p.height);
  const minScale=Math.min(1,Math.max(5/bounds[2],5/bounds[3])),maxScale=Math.min(720/bounds[2],540/bounds[3]);
  if(s*stageFit<minScale||s*stageFit>maxScale){if(plan)plan=groupPlan([{plan,m:[s,0,0,s,0,0],alpha:1,blend:'source-over'}]);body=`<g transform="scale(${s})">${body}</g>`;bounds=bounds.map(v=>v*s);s=1}
