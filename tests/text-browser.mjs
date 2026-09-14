@@ -14,7 +14,7 @@ try{
  const textSection=page.locator('details.section').filter({has:page.locator('summary',{hasText:'テキスト'})}).first();
  await textSection.getByRole('button',{name:'＋ 文字ごとに登場'}).click();
  await page.waitForFunction(id=>window.__IG.state.p.nodes.find(n=>n.id===id)?.data.animators.length===1,textId);
- const animationSection=page.locator('details.section').filter({has:page.locator('summary',{hasText:'Animation'})}).first();
+ const animationSection=page.locator('details.section').filter({hasText:/^Animation/}).first();
  await animationSection.locator('select').selectOption('zoom');
  await animationSection.getByRole('button',{name:'追加'}).click();
  await page.waitForFunction(id=>{const n=window.__IG.state.p.nodes.find(n=>n.id===id);return n&&typeof n.transform.scale[0]==='object'&&typeof n.transform.scale[1]==='object'},textId);
