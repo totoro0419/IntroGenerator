@@ -4,7 +4,7 @@ import {beats,beatAtSeconds} from './math.js';
 import {validateSource} from './compiler.js';
 
 const $=s=>document.querySelector(s);
-const all=s=>[...document.querySelectorAll(s)];
+const all=(s,root=document)=>[...root.querySelectorAll(s)];
 let scheduled=false;
 
 function status(message,error=false){
