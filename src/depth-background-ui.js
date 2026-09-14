@@ -71,13 +71,23 @@ function forceRenderThroughHistory(){
  undo.click();if(redo&&!redo.disabled)redo.click();
 }
 
-function commit(mutator){
+function persistAndRebuild(){
+ const S=state(),save=$('#save-state');if(!S?.p)return;
+ if(save)save.textContent='保存中';
+ const request=indexedDB.open('IntroGenerator',1);
+ request.onsuccess=()=>{const db=request.result,tx=db.transaction('projects','readwrite');tx.objectStore('projects').put(S.p,'current');tx.oncomplete=()=>{if(save)save.textContent='保存済み';db.close()};tx.onerror=()=>{if(save)save.textContent='保存できません';db.close()}};
+ request.onerror=()=>{if(save)save.textContent='保存できません'};
+ window.__IG?.rebuild?.();
+ requestAnimationFrame(()=>selectLayer(S.id));
+}
+
+function commit(mutator,{historyRender=false}={}){
  const S=state();if(!S?.p)return;
  const before=structuredClone(S.p);
  try{
   mutator();validateSource(S.p);S.undo.push(before);if(S.undo.length>40)S.undo.shift();S.redo=[];S.revision++;
   if($('#undo'))$('#undo').disabled=false;if($('#redo'))$('#redo').disabled=true;
-  forceRenderThroughHistory();
+  if(historyRender)forceRenderThroughHistory();else persistAndRebuild();
  }catch(error){S.p=before;setError(error.message)}
 }
 
@@ -134,7 +144,7 @@ function installAddEntry(){
    const target=S.p.nodes.find(n=>n.id===S.id),parent=target&&['group','composition'].includes(target.type)?target.id:S.p.root;
    const proto=node('shape','Pattern source',null);S.p.nodes.push(proto);S.p.definitions.push(proto.id);
    const n=node('repeater','Depth zoom background');n.data.template=proto.id;addNode(S.p,n,parent);configureDepthBackground(S.p,n);createdId=n.id;S.id=n.id;
-  });
+  },{historyRender:true});
   if(createdId&&state()?.p?.nodes.some(n=>n.id===createdId)){state().id=createdId;selectLayer(createdId)}
   select.value='depth';
  },true);
