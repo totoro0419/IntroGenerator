@@ -7,7 +7,7 @@ try{
  page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
  await page.goto('http://127.0.0.1:5173/IntroGenerator/');
  await page.waitForFunction(()=>window.__IG?.state?.compiled,undefined,{timeout:60000});
- await page.waitForSelector('#add-type option[value="depth"]',{timeout:10000});
+ await page.waitForSelector('#add-type option[value="depth"]',{state:'attached',timeout:10000});
  await page.locator('#add-type').selectOption('depth');
  await page.locator('#add').click();
  await page.waitForFunction(()=>{const s=window.__IG?.state,n=s?.p?.nodes.find(x=>x.id===s.id);return n?.type==='repeater'&&n.name==='Depth zoom background'},undefined,{timeout:30000});
