@@ -1,5 +1,6 @@
 import profile from '../schemas/export-profile.json';
 import {beats,beatAtSeconds,random,validateTempo} from './math.js';
+import {AUTHORING_FORMAT,stackFromPrimitive} from './easing-stack.js';
 export const uid=()=>`n${crypto.randomUUID().replaceAll('-','')}`;
 export const solid=(rgba=[.38,.8,1,1])=>({kind:'solid',rgba});
 export const stroke=()=>({enabled:false,width:2,paint:solid(),space:'geometric',cap:'round',join:'round',miterLimit:4,uniformAlpha:true});
@@ -20,11 +21,11 @@ export function node(type,name=type,parent='root'){let n={id:uid(),name,parent,c
  if(type==='view'){n.space='screen';n.data={camera:'',worldRoot:'',backgroundRoot:null,overlayRoot:null,viewport:[-240,-180,480,360],clip:true,sort:'painter'}}
  return n
 }
-export function makeProject(){let root=node('group','Main scene',null);root.id='root';let p={format:'IGAUTHOR/1.3',projectId:uid(),width:480,height:360,duration:6,fit:'contain',background:[.025,.035,.065,1],seed:1,root:'root',definitions:[],nodes:[root],expressions:[],tracks:[{id:'particleScale',unit:'scalar',default:1,keys:[]},{id:'particleAlpha',unit:'alpha',default:1,keys:[{id:'pa0',time:0,value:1,ease:{kind:'linear'}},{id:'pa1',time:1,value:0,ease:{kind:'linear'}}]}],assets:[],audio:[],tempo:[{beat:0,bpm:120}],profile:{...profile,id:'portable-v1',timeMode:'sampled',sampleFPS:30},timeAnchors:[],markers:[]};return p}
+export function makeProject(){let root=node('group','Main scene',null);root.id='root';let p={format:AUTHORING_FORMAT,projectId:uid(),width:480,height:360,duration:6,fit:'contain',background:[.025,.035,.065,1],seed:1,root:'root',definitions:[],nodes:[root],expressions:[],tracks:[{id:'particleScale',unit:'scalar',default:1,keys:[]},{id:'particleAlpha',unit:'alpha',default:1,keys:[{id:'pa0',time:0,value:1,ease:stackFromPrimitive({kind:'linear'},'pa0')},{id:'pa1',time:1,value:0,ease:stackFromPrimitive({kind:'linear'},'pa1')}]}],assets:[],audio:[],tempo:[{beat:0,bpm:120}],profile:{...profile,id:'portable-v1',timeMode:'sampled',sampleFPS:30},timeAnchors:[],markers:[]};return p}
 export function addNode(p,n,parent=p.root){n.parent=parent;n.time.end=p.duration;n.time.duration=p.duration;p.nodes.push(n);p.nodes.find(x=>x.id===parent).children.push(n.id);return n}
 export function input(p,name){let e=p.expressions.find(e=>e.op==='input'&&e.name===name);if(!e){e={id:uid(),op:'input',name};p.expressions.push(e)}return {expr:e.id}}
 export function expression(p,op,args){let e={id:uid(),op,args};p.expressions.push(e);return {expr:e.id}}
-export function animate(p,obj,key,values,unit='scalar'){const tr={id:uid(),unit,default:values[0][1],keys:values.map(([time,value,kind='cubicOut'])=>({id:uid(),time,value,ease:{kind}}))};p.tracks.push(tr);let e={id:uid(),op:'track',track:tr.id,time:input(p,'localTime')};p.expressions.push(e);obj[key]={expr:e.id};return tr}
+export function animate(p,obj,key,values,unit='scalar'){const tr={id:uid(),unit,default:values[0][1],keys:values.map(([time,value,kind='cubicOut'])=>{const id=uid();return{id,time,value,ease:stackFromPrimitive({kind},id)}})};p.tracks.push(tr);let e={id:uid(),op:'track',track:tr.id,time:input(p,'localTime')};p.expressions.push(e);obj[key]={expr:e.id};return tr}
 export function timingAnchor(p,target,owner,key=null){return (p.timeAnchors||[]).find(a=>a.target===target&&a.owner===owner&&(a.key??null)===(key??null))||null}
 export function timingValue(p,unit,seconds){return unit==='beats'?beatAtSeconds(p.tempo,seconds):seconds}
 function anchorLocation(p,a){
