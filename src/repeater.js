@@ -25,7 +25,7 @@ export function repeatInstances(author,n,c,m,z,space,cameraTime,cameraId,cameraR
   const candidateN=(hi[0]-lo[0]+1)*(hi[1]-lo[1]+1);if(candidateN>d.maxCount)throw Error(`画面を覆う格子は${candidateN}個必要です。最大個数を増やしてください`);
   cells=[];for(let y=lo[1];y<=hi[1];y++)for(let x=lo[0];x<=hi[0];x++){
    const tx=x+scroll[0],ty=y+scroll[1];if(!rectIntersectsQuad(tx+left,ty+bottom,tx+right,ty+top,ps))continue;
-   cells.push({x,y,m:mul(bm,trs(tx,ty))});
+   cells.push({x,y,m:trs(...point(bm,[tx,ty]))});
   }
   N=cells.length;
  }
