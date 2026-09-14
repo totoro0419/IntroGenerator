@@ -129,12 +129,13 @@ function installAddEntry(){
  add.addEventListener('click',event=>{
   if(select.value!=='depth')return;
   event.preventDefault();event.stopImmediatePropagation();
-  const S=state();if(!S?.p)return;
+  const S=state();if(!S?.p)return;let createdId=null;
   commit(()=>{
    const target=S.p.nodes.find(n=>n.id===S.id),parent=target&&['group','composition'].includes(target.type)?target.id:S.p.root;
    const proto=node('shape','Pattern source',null);S.p.nodes.push(proto);S.p.definitions.push(proto.id);
-   const n=node('repeater','Depth zoom background');n.data.template=proto.id;addNode(S.p,n,parent);configureDepthBackground(S.p,n);S.id=n.id;
+   const n=node('repeater','Depth zoom background');n.data.template=proto.id;addNode(S.p,n,parent);configureDepthBackground(S.p,n);createdId=n.id;S.id=n.id;
   });
+  if(createdId&&state()?.p?.nodes.some(n=>n.id===createdId)){state().id=createdId;selectLayer(createdId)}
   select.value='depth';
  },true);
  return true;
