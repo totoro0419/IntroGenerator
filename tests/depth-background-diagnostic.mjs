@@ -16,7 +16,8 @@ try{
  const input=page.getByLabel('模様の拡大速度',{exact:true});await input.fill('.65');await input.press('Tab');
  let settled=true;
  try{await page.waitForFunction(()=>window.__IG.state.compiledRevision===window.__IG.state.revision&&document.querySelector('#save-state')?.textContent==='保存済み',undefined,{timeout:15000})}catch{settled=false}
- const after=await page.evaluate(()=>{const s=window.__IG.state,n=s.p.nodes.find(x=>x.id===s.id);return {revision:s.revision,compiledRevision:s.compiledRevision,save:document.querySelector('#save-state')?.textContent,preview:document.querySelector('#preview-tag')?.textContent,status:document.querySelector('#status')?.textContent,busy:!document.querySelector('#busy')?.hidden,selected:n&&{id:n.id,type:n.type,name:n.name},value:document.querySelector('[aria-label="模様の拡大速度"]')?.value,abort:s.abort?{aborted:s.abort.signal.aborted}:null,errors}});
+ const after=await page.evaluate(()=>{const s=window.__IG.state,n=s.p.nodes.find(x=>x.id===s.id);return {revision:s.revision,compiledRevision:s.compiledRevision,save:document.querySelector('#save-state')?.textContent,preview:document.querySelector('#preview-tag')?.textContent,status:document.querySelector('#status')?.textContent,busy:!document.querySelector('#busy')?.hidden,selected:n&&{id:n.id,type:n.type,name:n.name},value:document.querySelector('[aria-label="模様の拡大速度"]')?.value,abort:s.abort?{aborted:s.abort.signal.aborted}:null}});
+ after.errors=errors;
  console.log('PDF_F16_DIAGNOSTIC '+JSON.stringify({before,after,settled}));
  if(!settled)throw Error('PDF-F16 did not settle: '+JSON.stringify(after));
 }finally{await browser.close()}
