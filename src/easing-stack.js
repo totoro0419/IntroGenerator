@@ -36,9 +36,8 @@ export function migrateEasingSource(project){
 }
 
 export function legacyValidationView(project){
- const copy=structuredClone(project);copy.format=LEGACY_AUTHORING_FORMAT;
- for(const track of copy.tracks||[])for(const key of track.keys||[])key.ease={kind:'linear'};
- return copy
+ const tracks=(project.tracks||[]).map(track=>({...track,keys:(track.keys||[]).map(key=>({...key,ease:{kind:'linear'}}))}));
+ return {...project,format:LEGACY_AUTHORING_FORMAT,tracks}
 }
 
 export function assertEasingStackSemantics(project,validateStack){
