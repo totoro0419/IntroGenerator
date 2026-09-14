@@ -61,8 +61,19 @@ function augment(force=false){
   }
   label=document.createElement('label');label.dataset.temporalFalloff='';label.textContent='減衰';
   const select=document.createElement('select');select.ariaLabel='残像の減衰';syncSelect(select,effect);
-  select.onchange=()=>commit(()=>effect.falloff=select.value||null).then(()=>augment(true));label.append(select);fields.append(label);
-  const create=document.createElement('button');create.className='mini';create.textContent='減衰カーブを作成';create.onclick=()=>commit(()=>{const id=uid(),linear={kind:'stack',layers:[{id:uid(),enabled:true,weight:1,curve:{kind:'linear'}}]};S.p.tracks.push({id,unit:'alpha',default:1,keys:[{id:uid(),time:0,value:1,ease:structuredClone(linear)},{id:uid(),time:1,value:0,ease:structuredClone(linear)}]});effect.falloff=id}).then(()=>augment(true));fields.append(create);
+  select.onchange=()=>{
+   const pending=commit(()=>effect.falloff=select.value||null);
+   renderCurveEditor(fields,effect);
+   pending.then(()=>augment(true)).catch(()=>augment(true));
+  };
+  label.append(select);fields.append(label);
+  const create=document.createElement('button');create.className='mini';create.textContent='減衰カーブを作成';create.onclick=()=>{
+   const id=uid(),linear={kind:'stack',layers:[{id:uid(),enabled:true,weight:1,curve:{kind:'linear'}}]};
+   const pending=commit(()=>{S.p.tracks.push({id,unit:'alpha',default:1,keys:[{id:uid(),time:0,value:1,ease:structuredClone(linear)},{id:uid(),time:1,value:0,ease:structuredClone(linear)}]});effect.falloff=id});
+   syncSelect(select,effect);renderCurveEditor(fields,effect);
+   pending.then(()=>augment(true)).catch(()=>augment(true));
+  };
+  fields.append(create);
   renderCurveEditor(fields,effect);
  });
 }
