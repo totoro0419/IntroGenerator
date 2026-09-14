@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:introgenerator:easing-stack:1.4",
+  "$ref": "#/$defs/easingStack",
+  "$defs": {
+    "primitiveEasing": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "hold", "linear",
+                "sineIn", "sineOut", "sineInOut",
+                "quadIn", "quadOut", "quadInOut",
+                "cubicIn", "cubicOut", "cubicInOut",
+                "quartIn", "quartOut", "quartInOut",
+                "quintIn", "quintOut", "quintInOut",
+                "expoIn", "expoOut", "expoInOut",
+                "circIn", "circOut", "circInOut",
+                "bounceIn", "bounceOut", "bounceInOut"
+              ]
+            }
+          },
+          "required": ["kind"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {"enum": ["backIn", "backOut", "backInOut"]},
+            "overshoot": {"type": "number", "minimum": -1e100, "maximum": 1e100}
+          },
+          "required": ["kind", "overshoot"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {"enum": ["elasticIn", "elasticOut", "elasticInOut"]},
+            "period": {"type": "number", "exclusiveMinimum": 0, "maximum": 1e100}
+          },
+          "required": ["kind", "period"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {"enum": ["powerIn", "powerOut", "powerInOut"]},
+            "power": {"type": "number", "exclusiveMinimum": 0, "maximum": 1e100}
+          },
+          "required": ["kind", "power"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {"const": "bezier"},
+            "x1": {"type": "number", "minimum": 0, "maximum": 1},
+            "y1": {"type": "number", "minimum": -1e100, "maximum": 1e100},
+            "x2": {"type": "number", "minimum": 0, "maximum": 1},
+            "y2": {"type": "number", "minimum": -1e100, "maximum": 1e100}
+          },
+          "required": ["kind", "x1", "y1", "x2", "y2"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {"const": "samples"},
+            "points": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {"type": "number", "minimum": -1e100, "maximum": 1e100}
+              }
+            }
+          },
+          "required": ["kind", "points"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "easingLayer": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$"},
+        "enabled": {"type": "boolean"},
+        "weight": {"type": "number", "minimum": 0, "maximum": 1e100},
+        "curve": {"$ref": "#/$defs/primitiveEasing"}
+      },
+      "required": ["id", "enabled", "weight", "curve"],
+      "additionalProperties": false
+    },
+    "easingStack": {
+      "type": "object",
+      "properties": {
+        "kind": {"const": "stack"},
+        "layers": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/easingLayer"}
+        }
+      },
+      "required": ["kind", "layers"],
+      "additionalProperties": false
+    }
+  }
+}
