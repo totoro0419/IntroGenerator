@@ -34,6 +34,7 @@ jobs:
           node tests/text-browser.mjs
           node tests/temporal-echo-browser.mjs
           node tests/camera-echo-browser.mjs
+          node tests/repeating-background-browser.mjs
           node tests/generators-browser.mjs
           node tests/scratch-browser.mjs
       - uses: actions/upload-artifact@v4
