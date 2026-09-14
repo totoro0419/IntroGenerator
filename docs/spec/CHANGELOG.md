@@ -1,3 +1,15 @@
+# 1.4 Easing Stack design amendment
+
+- PDF-F09を単一Easingから複数Easingの加算Stackへ拡張する正式設計差分を追加。
+- 合成式を `E_stack(u)=u+Σw_i(E_i(u)-u)` に固定。開始値・終了値を厳密維持し、Overshootは保持する。
+- Layerごとに安定ID、enabled、weight、Primitive curve parameterを保持する。
+- 0 LayerはLinear、1 Layer・Weight 1は従来単一Easingと同一。
+- Layer順はv1.4では数値結果へ影響しない。順序はEditor表示のため保存する。
+- IGAUTHOR/1.3の単一Easingは、1 Layer・Weight 1へ見た目を変えず移行する。
+- Authoring targetをIGAUTHOR/1.4と定義。Runtime ABIはIGRT/1.1を維持し、CompilerがStackを単一Curve/LUTへLowerする。
+- `EASING_STACK_SPEC_v1.4.md` と `easing-stack-contract.json` をF09/Runtime 4.4に対する優先Source of Truthとして登録。
+- 現行製品コードと `schemas/authoring.schema.json` はまだIGAUTHOR/1.3。1.4実装工程でSchema・Editor・Evaluator・Compiler・受入試験を同時移行する。未実装の1.4をPASS扱いしない。
+
 # 1.3
 
 - 32 PDF機能の編集操作と期待結果、元要求18機能群をFUNCTIONAL_SPECIFICATION.mdとfunctional-contract.jsonへ明文化。
