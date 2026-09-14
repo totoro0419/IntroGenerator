@@ -1,30 +1,58 @@
-# IntroGenerator 実装契約 1.3
+# IntroGenerator 実装契約 1.3 + Authoring 1.4 Easing Stack差分
 
-Web Editorの編集モデルを非破壊で保持し、共通sb3をScratch標準機能と独立Webエンジンで再生するための設計・検証資料です。製品Editor、Compiler、Scratch Runtime、Web Rendererの実装そのものは含みません。
+Web Editorの編集モデルを非破壊で保持し、共通sb3をScratch標準機能と独立Webエンジンで再生するための設計・検証資料です。
 
-まずFUNCTIONAL_SPECIFICATION.mdでユーザー機能を確認します。1.3では拍固定／秒固定・マーカー・放射Particle・加速度の基準空間を保存契約へ補いました。
+基本契約は1.3です。ただし **PDF-F09 Easingについては `EASING_STACK_SPEC_v1.4.md` が1.4の正式差分として1.3記述を上書きします。** Easing Stackは複数EasingのLinearとの差分を加算合成し、開始値・終了値を維持します。再生ABIはIGRT/1.1のままです。
+
+現在の製品コードと `schemas/authoring.schema.json` はまだIGAUTHOR/1.3実装です。1.4差分を設計Source of Truthとして先に確定し、次の実装工程でSchema・Editor・Evaluator・Compilerへ同時に反映します。Schemaだけ先行して未実装形式を受理する状態にはしません。
+
+## Source of Truthの優先順位
+
+1. `EASING_STACK_SPEC_v1.4.md` — PDF-F09 / Easingに限る1.4正式差分
+2. `FUNCTIONAL_SPECIFICATION.md` — その他のユーザー機能仕様
+3. `IntroGenerator_Runtime_Compiler_v1.md` — Runtime/Compiler意味仕様
+4. `PDF_FUNCTIONAL_BASELINE.md` — PDF由来の最低機能
+5. machine-readable contracts / schemas
+
+Easingに関して1.3文書と1.4差分が衝突する場合は、1.4差分を優先します。それ以外の意味仕様は1.3を維持します。
 
 ## 内容
 
 | パス | 内容 |
 |---|---|
-| IntroGenerator_Runtime_Compiler_v1.md | 指定順の全18章。本文内の契約版は1.3、再生ABIは1.1 |
-| schemas/authoring.schema.json | IGAUTHOR/1.3保存形式。追加field禁止、型付きNode/Expression/Track |
+| EASING_STACK_SPEC_v1.4.md | Easing Stackの正式1.4差分。加算式、保存形式、移行、Compiler、UI、受入条件 |
+| easing-stack-contract.json | Easing Stackの機械可読契約。式・端点・互換・受入条件 |
+| FUNCTIONAL_SPECIFICATION.md | 編集操作・期待結果・境界動作の機能仕様。F09は1.4差分で上書き |
+| IntroGenerator_Runtime_Compiler_v1.md | 指定順の全18章。基本契約版は1.3、再生ABIは1.1。4.4は1.4差分で上書き |
+| schemas/authoring.schema.json | 現行IGAUTHOR/1.3保存形式。1.4実装時にStack形式へ更新予定 |
 | schemas/runtime-lists.schema.json | IGRT/1.1永続ListのJSON表現 |
 | schemas/runtime-abi.json | Table列、型、Opcode、Header、作業Listの機械可読カタログ |
 | schemas/export-profile.json | 初期構造予算。FPSの実測保証ではない |
-| build_contract.py | 上記4ファイルを再生成するスクリプト |
+| build_contract.py | 基本契約ファイルを再生成するスクリプト |
 | verification/contract_check.py | 部分的な意味検査と数式の参照Evaluator |
-| verification/run_checks.py | 36件の契約検査と最小Fixture生成 |
+| verification/run_checks.py | 基本契約検査と最小Fixture生成 |
 | verification/results.json | 実行結果と未検証範囲 |
-| fixtures/ | CASE A〜Fの最小Authoring/IR 12ファイル＋追加機能のAuthoring 4ファイル |
+| fixtures/ | 基本CASEのAuthoring/IR Fixture |
 | PDF_FUNCTIONAL_BASELINE.md | PDF全115ページから整理した32機能と調整項目・合格条件 |
 | pdf-feature-coverage.json | 115ページの対応索引と32機能の状態 |
-| verification/feature_checks.py | 追加した機能の保存形式・無効入力・網羅性の検査 |
-| FUNCTIONAL_SPECIFICATION.md | 編集操作・期待結果・境界動作の機能仕様 |
-| functional-contract.json | PDF32要件と原要求18機能群の受入項目 |
+| verification/feature_checks.py | PDF機能の保存形式・無効入力・網羅性の検査 |
+| functional-contract.json | PDF32要件と原要求18機能群の1.3受入項目。F09はeasing-stack-contract.jsonで上書き |
 | verification/continuation_checks.py | 1.3追加保存契約の検査 |
 | sources.json | 参照した公式実装のURLと取得時のGit blob識別子 |
+
+## Easing Stack 1.4の要点
+
+```text
+E_stack(u) = u + Σ enabled_i * weight_i * (E_i(u) - u)
+```
+
+- Linearが暗黙の基準線
+- 1 Layer・Weight 1は従来Easingと同一
+- 0 LayerはLinear
+- Stack出力は0〜1へClampしない
+- Layer順はv1.4では数値結果へ影響しない
+- IGAUTHOR/1.3単一Easingは1 Layer・Weight 1として移行
+- CompilerがStackを単一Curveへ畳み込み、IGRT/1.1へLower
 
 ## 実行
 
@@ -39,18 +67,12 @@ python -m venv .venv
 .venv/bin/python verification/continuation_checks.py
 ```
 
-Windowsでは`.venv/bin/python`を`.venv/Scripts/python.exe`へ置き換えます。検査はfixturesとresults.jsonを再生成します。製品コードへ組み込む場合は本文のSemantic Validationを実装し、この小規模checkerを完全な安全性検査と取り違えないでください。
+Windowsでは`.venv/bin/python`を`.venv/Scripts/python.exe`へ置き換えます。
 
-## 確認できた範囲
-
-基礎36検査、PDF機能保存14検査、1.3追加15検査を実行し、合計65件、失敗0・エラー0。追加14件は機能の保存形式・不正参照・ページ対応の検査であり、製品の機能試験ではありません。行列合成の検査1件はseed固定の10,000組を走査します。JSON Schema自体と6組の最小データ、時間差・位相・過去Path評価・粒子seek・周期・Sequence境界、丸め、整数参照、退化Path、Track/Easing、無効参照などを確認しています。
-
-FixtureのAuthoringとIRは独立して作っています。製品Compilerで変換した対ではなく、CASE全体を視覚的に再現するsb3でもありません。例えばBのIRは1本のTemplateをindex違いで評価する数式検査です。Fontは外部参照のメタデータのみで、フォント本体やShaping実装は同梱していません。Runtimeの仮Asset metadataも実メディアとのリンク検査には使えません。
-
-参照EvaluatorはPythonの配列を使い、実ScratchのMy Block stackやPenを実行しません。数式の反証を助けるための実装であり、すべての浮動小数点演算・描画差の一致を証明するものではありません。Scratch/Web実行、音声同期、保存往復、画素比較、性能は未実施です。実装の合格条件は本文18章にあります。
+既存の1.3検査結果は1.3契約に対する記録です。Easing Stack 1.4の製品実装・Schema移行・UI操作・Scratch/Web一致試験は、1.4実装工程で新しい受入試験として追加します。1.4差分を未実装のままPASS扱いしません。
 
 ## 読む順序
 
-FUNCTIONAL_SPECIFICATION.mdで機能の操作と期待結果を確認します。実装時は本文1〜5章で座標と時間の意味を確認し、11〜13章と機械仕様からLoader/Evaluator/Adapterを実装します。14章のPassへAuthoring変換を接続し、15章の6ケースと18章のGateを順に通します。Editorの制限追加や全面Bakeで未実装部分を隠すことは、この契約に含みません。
+通常はFUNCTIONAL_SPECIFICATION.mdから読みます。ただしEasing実装では先に `EASING_STACK_SPEC_v1.4.md` と `easing-stack-contract.json` を読み、その後Runtime/Compiler 4.4と既存Schemaを移行対象として確認します。
 
-PDF全115ページを最低機能の抽出に参照しました。PDF固有の描画回数・分割数・変数名・計算式は互換要件にしません。機能検査の結果と未実施範囲はverification/feature-results.jsonを参照してください。sources.jsonのGit blob SHAはファイル内容の識別子であり、commit SHAやScratch公式サイトの稼働版を意味しません。
+Editorの制限追加や全面Bakeで未実装部分を隠すことは契約に含みません。Compiler最適化はAuthoring SourceのEasing Layerを破壊してはいけません。
