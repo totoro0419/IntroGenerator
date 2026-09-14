@@ -29,6 +29,7 @@ jobs:
           node tests/browser-smoke.mjs
           node tests/features-browser.mjs
           node tests/easing-browser.mjs
+          node tests/camera-browser.mjs
           node tests/generators-browser.mjs
           node tests/scratch-browser.mjs
       - uses: actions/upload-artifact@v4
