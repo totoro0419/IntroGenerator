@@ -8,7 +8,7 @@ export const digest=x=>bytesToHex(sha256(typeof x==='string'?utf8(x):x));
 export const md5hex=x=>bytesToHex(md5(x));
 export function b64(bytes){let s='';for(let i=0;i<bytes.length;i+=8192)s+=String.fromCharCode(...bytes.subarray(i,i+8192));return btoa(s)}
 export const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-export const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
+export const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function canonical(x){const a=[];const add=s=>a.push(utf8(s));function walk(v){if(v===null)add('N');else if(typeof v==='boolean')add(v?'B1':'B0');else if(typeof v==='number'){if(!Number.isFinite(v)||Math.abs(v)>1e100)throw Error('非有限の数値');add('D');let b=new Uint8Array(8);new DataView(b.buffer).setFloat64(0,Object.is(v,-0)?0:v);a.push(b)}else if(typeof v==='string'){if(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/u.test(v))throw Error('不正なUnicode');let b=utf8(v);add('S'+b.length+':');a.push(b)}else if(Array.isArray(v)){add('A'+v.length+':');v.forEach(walk)}else{let keys=Object.keys(v).sort((a,b)=>{let aa=[...a].map(x=>x.codePointAt(0)),bb=[...b].map(x=>x.codePointAt(0));for(let i=0;i<Math.min(aa.length,bb.length);i++)if(aa[i]!==bb[i])return aa[i]-bb[i];return aa.length-bb.length});add('O'+keys.length+':');keys.forEach(k=>{walk(k);walk(v[k])})}}walk(x);let out=new Uint8Array(a.reduce((n,b)=>n+b.length,0)),i=0;for(let b of a){out.set(b,i);i+=b.length}return out}
 export const hashObject=o=>digest(canonical(o));
 export class AssetStore{
