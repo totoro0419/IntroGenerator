@@ -1,6 +1,7 @@
 import {clipLine} from './paths.js';
 import {groupPlan,svgPlan,effectPlan,transformedBounds} from './render-plan.js';
 import {compileAudio} from './audio.js';
+import {validateTiming} from './model.js';
 import Ajv from 'ajv/dist/2020.js';
 import schema from '../schemas/authoring.schema.json';
 import ABI from '../schemas/runtime-abi.json';
@@ -15,6 +16,7 @@ export function validateSource(p){
  if(!nodes.has(p.root)||nodes.get(p.root).parent!==null)throw Error('Root参照が不正です');
  for(const n of p.nodes){if(new Set(n.children).size!==n.children.length)throw Error('Child参照の重複');for(const id of n.children){const c=nodes.get(id);if(!c||c.parent!==n.id)throw Error('親子参照が一致しません')}if(n.parent!==null&&!nodes.get(n.parent)?.children.includes(n.id))throw Error('親参照が一致しません')}
  const done=new Set();for(const n of p.nodes){let cur=n,seen=new Set();while(cur&&!done.has(cur.id)){if(seen.has(cur.id))throw Error('Groupの親子関係が循環しています');seen.add(cur.id);cur=nodes.get(cur.parent)}for(const id of seen)done.add(id)}
+ validateTiming(p);
  return true
 }
 export const row=(L,table,values)=>{ABI.tables[table].forEach((k,i)=>L[k].push(values[i]));return L[ABI.tables[table][0]].length};
@@ -26,18 +28,18 @@ export async function compile(source,onProgress=()=>{},signal){validateSource(so
  if(sb[0]>visible[0]+visible[2]||sb[1]>visible[1]+visible[3]||sb[0]+sb[2]<visible[0]||sb[1]+sb[3]<visible[1])continue;
  // Assets outside Scratch's size/fence range are clipped locally at export only.
  if(!leaf.penPath&&(sb[2]*fit>710||sb[3]*fit>530||Math.abs(leaf.m[4]*fit)>650||Math.abs(leaf.m[5]*fit)>590)){
-  const plan=effectPlan(groupPlan([{plan:leaf.plan||svgPlan(leaf.body,leaf.bounds),m:leaf.m,alpha:1,blend:'sourceOver'}]),{kind:'clip',rect:visible});
+  const plan=effectPlan(groupPlan([{plan:leaf.plan||svgPlan(leaf.body,leaf.bounds),m:leaf.m,alpha:1,blend:'source-over'}]),{kind:'clip',rect:visible});
   leaf={...leaf,plan,body:'',bounds:plan.bounds,m:I,needsRaster:false};
  }
  if(leaf.penPath&&!leaf.plan&&leaf.alpha>=1&&leaf.penPath.rgba[3]>=1){const pth=leaf.penPath,m=leaf.m,scale=Math.hypot(m[0],m[1]),same=Math.abs(m[0]*m[2]+m[1]*m[3])<1e-7&&Math.abs(scale-Math.hypot(m[2],m[3]))<1e-7,fit=p.fit==='contain'?Math.min(480/p.width,360/p.height):Math.max(480/p.width,360/p.height),width=pth.width*(pth.space==='screen'?1:scale),segments=pth.chunks.reduce((n,c)=>n+c.length-1,0);
  if((same||pth.space==='screen')&&width*fit>=1&&width*fit<=480&&segments<256){let ordinal=0;for(const chunk of pth.chunks)for(let j=1;j<chunk.length;j++){const key=leaf.key+'/line'+ordinal++,pair=clipLine(point(m,chunk[j-1]),point(m,chunk[j]),[-240/fit-width/2-1,-180/fit-width/2-1,240/fit+width/2+1,180/fit+width/2+1]);if(!pair)continue;const v=[...base];v[8]=width;v[9]=rgbInt(pth.rgba);v.splice(16,4,...pair.flat());let entry=map.get(key);if(!entry){entry={key,order:leaf.order+'/line'+String(ordinal).padStart(5,'0'),nodeId:leaf.nodeId,values:new Map(),asset:0,prim:2};map.set(key,entry)}entry.values.set(f,v)}continue}}
  let m=leaf.m,s=Math.hypot(m[0],m[1]),theta=Math.atan2(m[1],m[0]),body=leaf.body,bounds=leaf.bounds,plan=leaf.plan;if(s<1e-10||leaf.alpha<=0)continue;
  let c=Math.cos(theta),sn=Math.sin(theta),h=[(c*m[0]+sn*m[1])/s,(-sn*m[0]+c*m[1])/s,(c*m[2]+sn*m[3])/s,(-sn*m[2]+c*m[3])/s,0,0];
- if(Math.abs(h[2])+Math.abs(h[1])+Math.abs(h[3]-1)>1e-7){h=h.map(x=>+x.toFixed(6));if(plan)plan=groupPlan([{plan,m:h,alpha:1,blend:'sourceOver'}]);body=`<g transform="matrix(${h.join(' ')})">${body}</g>`;let [x,y,w,hh]=bounds,ps=[[x,y],[x+w,y],[x+w,y+hh],[x,y+hh]].map(p=>point(h,p)),xs=ps.map(p=>p[0]),ys=ps.map(p=>p[1]);bounds=[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)]}
+ if(Math.abs(h[2])+Math.abs(h[1])+Math.abs(h[3]-1)>1e-7){h=h.map(x=>+x.toFixed(6));if(plan)plan=groupPlan([{plan,m:h,alpha:1,blend:'source-over'}]);body=`<g transform="matrix(${h.join(' ')})">${body}</g>`;let [x,y,w,hh]=bounds,ps=[[x,y],[x+w,y],[x+w,y+hh],[x,y+hh]].map(p=>point(h,p)),xs=ps.map(p=>p[0]),ys=ps.map(p=>p[1]);bounds=[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)]}
  // Fold uniform scale into only the asset variants outside Scratch's size limits.
  const stageFit=p.fit==='contain'?Math.min(480/p.width,360/p.height):Math.max(480/p.width,360/p.height);
  const minScale=Math.min(1,Math.max(5/bounds[2],5/bounds[3])),maxScale=Math.min(720/bounds[2],540/bounds[3]);
- if(s*stageFit<minScale||s*stageFit>maxScale){if(plan)plan=groupPlan([{plan,m:[s,0,0,s,0,0],alpha:1,blend:'sourceOver'}]);body=`<g transform="scale(${s})">${body}</g>`;bounds=bounds.map(v=>v*s);s=1}
+ if(s*stageFit<minScale||s*stageFit>maxScale){if(plan)plan=groupPlan([{plan,m:[s,0,0,s,0,0],alpha:1,blend:'source-over'}]);body=`<g transform="scale(${s})">${body}</g>`;bounds=bounds.map(v=>v*s);s=1}
  let aid=plan?assets.putPlan(plan):assets.put(body,bounds,leaf.needsRaster),v=[...base];v.splice(0,6,...trs(m[4],m[5],s,s,theta*180/Math.PI));v[6]=leaf.z;v[7]=clamp(leaf.alpha);v[10]=leaf.color||0;v[11]=leaf.brightness||0;v[12]=aid;
  let entry=map.get(leaf.key);if(!entry){entry={key:leaf.key,order:leaf.order,nodeId:leaf.nodeId,values:new Map(),asset:aid};map.set(leaf.key,entry)}entry.values.set(f,v)}
  if(f%8===0){onProgress(f/frames*.7);await new Promise(r=>setTimeout(r,0))}}
