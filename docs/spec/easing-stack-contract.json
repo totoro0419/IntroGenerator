@@ -1,0 +1,49 @@
+{
+  "version": "IGEASINGSTACK/1.0",
+  "authoringTarget": "IGAUTHOR/1.4",
+  "runtimeABI": "IGRT/1.1",
+  "mode": "additive-deviation-v1",
+  "baseline": "linear",
+  "formula": "u + sum(enabled_i * weight_i * (curve_i(u) - u))",
+  "endpointContract": {
+    "at0": 0,
+    "at1": 1,
+    "exact": true
+  },
+  "layer": {
+    "required": ["id", "enabled", "weight", "curve"],
+    "weight": {
+      "minimum": 0,
+      "finite": true,
+      "default": 1
+    },
+    "nestedStackAllowed": false
+  },
+  "emptyStack": "linear",
+  "clampStackOutput": false,
+  "orderAffectsNumericResult": false,
+  "legacyMigration": {
+    "from": "IGAUTHOR/1.3 single easing",
+    "to": "one enabled layer with weight 1",
+    "mustPreserve": ["keyTime", "keyValue", "timeAnchor", "visualCurve"]
+  },
+  "compiler": {
+    "sampled": "evaluate final stack at shared sample times",
+    "continuousCertified": "adaptive-sample final stack to a single error-bounded LUT",
+    "runtimeStackOpcodeRequired": false
+  },
+  "acceptance": [
+    "single weight-1 layer equals legacy easing",
+    "multiple layers keep exact endpoints",
+    "midpoint equals additive-deviation formula",
+    "weight zero removes only that contribution",
+    "disabled layer removes only that contribution",
+    "deleting a layer preserves other layers and key endpoints",
+    "reordering layers does not change v1.4 numeric result",
+    "overshoot is preserved until property-level clamping",
+    "undo/redo preserves stack edits",
+    "save/reload preserves layer ids, weights, enabled flags, curve parameters and order",
+    "legacy 1.3 import preserves appearance",
+    "Scratch and Web reproduce the same compiled final curve"
+  ]
+}
