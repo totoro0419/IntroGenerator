@@ -8,7 +8,7 @@ import easingStackSchema from '../schemas/easing-stack.schema.json';
 import ABI from '../schemas/runtime-abi.json';
 import {AssetStore,hashObject,b64} from './assets.js';
 import {AuthorEvaluator} from './author.js';
-import {I,trs,point,clamp,rgbInt} from './math.js';
+import {I,trs,point,clamp,rgbInt,inverse} from './math.js';
 import {migrateEasingSource,legacyValidationView,assertEasingStackSemantics} from './easing-stack.js';
 import {gzipSync,strToU8} from 'fflate';
 const ajv=new Ajv({strict:false,allErrors:false}),validate=ajv.compile(schema),validateStack=ajv.compile(easingStackSchema);
@@ -24,11 +24,24 @@ export function validateSource(p){
 }
 export const row=(L,table,values)=>{ABI.tables[table].forEach((k,i)=>L[k].push(values[i]));return L[ABI.tables[table][0]].length};
 export function nextDown(x){let b=new ArrayBuffer(8),v=new DataView(b);v.setFloat64(0,x);v.setBigUint64(0,v.getBigUint64(0)-1n);return v.getFloat64(0)}
-export async function compile(source,onProgress=()=>{},signal){validateSource(source);let p=structuredClone(source);if(p.duration*p.profile.sampleFPS>200000)throw Error('フレーム数がScratch Listの上限を超えています');let assets=new AssetStore(p),author=new AuthorEvaluator(p,assets),fps=p.profile.sampleFPS,frames=Math.ceil(p.duration*fps),times=Array.from({length:frames},(_,i)=>i/fps),map=new Map();
+function hollowFrameOffscreen(leaf,n,visible,fit){
+ if(!n||n.type!=='shape'||n.data?.shape!=='frame'||leaf.plan||leaf.penPath||leaf.needsRaster||n.effects?.length||n.data.stroke?.enabled)return false;
+ const w=n.data.params?.width,h=n.data.params?.height,t=n.data.params?.thickness;
+ if(![w,h,t].every(Number.isFinite)||w<=0||h<=0||t<0)return false;
+ const hx=w/2-t,hy=h/2-t;if(hx<=0||hy<=0)return false;
+ const inv=inverse(leaf.m);if(!inv)return false;
+ // Keep a two-stage-pixel safety band so antialiasing at the inner edge is never culled.
+ const localPixel=Math.max(Math.hypot(inv[0],inv[1]),Math.hypot(inv[2],inv[3]))/Math.max(1e-12,fit),margin=localPixel*2;
+ if(hx<=margin||hy<=margin)return false;
+ const [x,y,vw,vh]=visible,corners=[[x,y],[x+vw,y],[x+vw,y+vh],[x,y+vh]].map(p=>point(inv,p));
+ return corners.every(([px,py])=>Math.abs(px)<hx-margin&&Math.abs(py)<hy-margin)
+}
+export async function compile(source,onProgress=()=>{},signal){validateSource(source);let p=structuredClone(source);if(p.duration*p.profile.sampleFPS>200000)throw Error('フレーム数がScratch Listの上限を超えています');let assets=new AssetStore(p),author=new AuthorEvaluator(p,assets),fps=p.profile.sampleFPS,frames=Math.ceil(p.duration*fps),times=Array.from({length:frames},(_,i)=>i/fps),map=new Map(),nodeById=new Map(p.nodes.map(n=>[n.id,n]));
  const base=[1,0,0,1,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0];
  for(let f=0;f<frames;f++){if(signal?.aborted)throw Error('キャンセルしました');const leaves=author.frame(times[f]);if(leaves.length>p.profile.maxDraws)throw Error('描画数の予算を超えています');for(let leaf of leaves){
  const fit=p.fit==='contain'?Math.min(480/p.width,360/p.height):Math.max(480/p.width,360/p.height),visible=[-240/fit,-180/fit,480/fit,360/fit],sb=transformedBounds(leaf.bounds,leaf.m);
  if(sb[0]>visible[0]+visible[2]||sb[1]>visible[1]+visible[3]||sb[0]+sb[2]<visible[0]||sb[1]+sb[3]<visible[1])continue;
+ if(hollowFrameOffscreen(leaf,nodeById.get(leaf.nodeId),visible,fit))continue;
  if(!leaf.penPath&&(Math.abs(leaf.m[4]*fit)>650||Math.abs(leaf.m[5]*fit)>590)){
   const plan=effectPlan(groupPlan([{plan:leaf.plan||svgPlan(leaf.body,leaf.bounds),m:leaf.m,alpha:1,blend:'source-over'}]),{kind:'clip',rect:visible});
   leaf={...leaf,plan,body:'',bounds:plan.bounds,m:I,needsRaster:false};
