@@ -26,8 +26,9 @@ export async function compile(source,onProgress=()=>{},signal){validateSource(so
  for(let f=0;f<frames;f++){if(signal?.aborted)throw Error('キャンセルしました');const leaves=author.frame(times[f]);if(leaves.length>p.profile.maxDraws)throw Error('描画数の予算を超えています');for(let leaf of leaves){
  const fit=p.fit==='contain'?Math.min(480/p.width,360/p.height):Math.max(480/p.width,360/p.height),visible=[-240/fit,-180/fit,480/fit,360/fit],sb=transformedBounds(leaf.bounds,leaf.m);
  if(sb[0]>visible[0]+visible[2]||sb[1]>visible[1]+visible[3]||sb[0]+sb[2]<visible[0]||sb[1]+sb[3]<visible[1])continue;
- // Assets outside Scratch's size/fence range are clipped locally at export only.
- if(!leaf.penPath&&(sb[2]*fit>710||sb[3]*fit>530||Math.abs(leaf.m[4]*fit)>650||Math.abs(leaf.m[5]*fit)>590)){
+ // Position fencing still needs a local crop. Size clamping is handled below by
+ // folding uniform scale into the asset, avoiding one full-frame asset per Camera frame.
+ if(!leaf.penPath&&(Math.abs(leaf.m[4]*fit)>650||Math.abs(leaf.m[5]*fit)>590)){
   const plan=effectPlan(groupPlan([{plan:leaf.plan||svgPlan(leaf.body,leaf.bounds),m:leaf.m,alpha:1,blend:'source-over'}]),{kind:'clip',rect:visible});
   leaf={...leaf,plan,body:'',bounds:plan.bounds,m:I,needsRaster:false};
  }
