@@ -14,19 +14,22 @@ try{
  await page.locator('#add-type').selectOption('scroll');
  await page.locator('#add').click();
  await page.waitForFunction(()=>{const s=window.__IG?.state,n=s?.p?.nodes.find(n=>n.id===s.id);return n?.type==='repeater'&&n.data.mode==='lattice'});
+ await page.waitForFunction(()=>window.__IG.state.compiledRevision===window.__IG.state.revision,{timeout:90000});
  await page.waitForSelector('[data-repeating-background-controls]');
  const repeaterId=await page.evaluate(()=>window.__IG.state.id);
  const templateId=await page.evaluate(id=>window.__IG.state.p.nodes.find(n=>n.id===id).data.template,repeaterId);
 
- const change=async(label,value,check)=>{const input=page.getByLabel(label,{exact:true});await input.fill(String(value));await input.press('Tab');await page.waitForFunction(check,{id:repeaterId,value})};
+ const change=async(label,value,check)=>{const input=page.getByLabel(label,{exact:true});await input.fill(String(value));await input.press('Tab');await page.waitForFunction(check,{id:repeaterId,value});await page.waitForFunction(()=>window.__IG.state.compiledRevision===window.__IG.state.revision&&document.querySelector('#save-state')?.textContent==='保存済み',{timeout:90000})};
  await change('格子 X軸 X',72,({id,value})=>window.__IG.state.p.nodes.find(n=>n.id===id).data.basis[0][0]===value);
  await change('格子 X軸 Y',18,({id,value})=>window.__IG.state.p.nodes.find(n=>n.id===id).data.basis[0][1]===value);
  await change('格子 Y軸 X',-12,({id,value})=>window.__IG.state.p.nodes.find(n=>n.id===id).data.basis[1][0]===value);
  await change('格子 Y軸 Y',54,({id,value})=>window.__IG.state.p.nodes.find(n=>n.id===id).data.basis[1][1]===value);
  await page.locator('#undo').click();
  await page.waitForFunction(id=>window.__IG.state.p.nodes.find(n=>n.id===id).data.basis[1][1]===50,repeaterId);
+ await page.waitForFunction(()=>window.__IG.state.compiledRevision===window.__IG.state.revision,{timeout:90000});
  await page.locator('#redo').click();
  await page.waitForFunction(id=>window.__IG.state.p.nodes.find(n=>n.id===id).data.basis[1][1]===54,repeaterId);
+ await page.waitForFunction(()=>window.__IG.state.compiledRevision===window.__IG.state.revision,{timeout:90000});
 
  // Pattern appearance and lattice motion remain independent editor state.
  const beforePattern=await page.evaluate(id=>{const n=window.__IG.state.p.nodes.find(n=>n.id===id);return {basis:structuredClone(n.data.basis),scroll:JSON.stringify(n.data.scroll)}},repeaterId);
@@ -34,9 +37,9 @@ try{
  const kind=page.locator('#inspector label').filter({hasText:'種類'}).locator('select').first();
  await kind.selectOption('circle');
  await page.waitForFunction(id=>window.__IG.state.p.nodes.find(n=>n.id===id)?.data.shape==='circle',templateId);
+ await page.waitForFunction(()=>window.__IG.state.compiledRevision===window.__IG.state.revision&&document.querySelector('#save-state')?.textContent==='保存済み',{timeout:90000});
  const afterPattern=await page.evaluate(id=>{const n=window.__IG.state.p.nodes.find(n=>n.id===id);return {basis:structuredClone(n.data.basis),scroll:JSON.stringify(n.data.scroll)}},repeaterId);
  if(JSON.stringify(beforePattern)!==JSON.stringify(afterPattern))throw Error('PDF-F15 pattern edit changed spacing or scroll: '+JSON.stringify({beforePattern,afterPattern}));
- await page.waitForFunction(()=>document.querySelector('#save-state')?.textContent==='保存済み',{timeout:15000});
 
  // Runtime semantics: a periodic lattice must cover the whole viewport while moving in both
  // lattice axes, including immediately around a wrap boundary.
