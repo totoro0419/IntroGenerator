@@ -1,5 +1,5 @@
 import {clipLine} from './paths.js';
-import {groupPlan} from './render-plan.js';
+import {groupPlan,svgPlan,effectPlan,transformedBounds} from './render-plan.js';
 import {compileAudio} from './audio.js';
 import Ajv from 'ajv/dist/2020.js';
 import schema from '../schemas/authoring.schema.json';
@@ -22,6 +22,13 @@ export function nextDown(x){let b=new ArrayBuffer(8),v=new DataView(b);v.setFloa
 export async function compile(source,onProgress=()=>{},signal){validateSource(source);let p=structuredClone(source);if(p.duration>120)throw Error('この版の書き出しは120秒までです');let assets=new AssetStore(p),author=new AuthorEvaluator(p,assets),fps=p.profile.sampleFPS,frames=Math.ceil(p.duration*fps),times=Array.from({length:frames},(_,i)=>i/fps),map=new Map();
  const base=[1,0,0,1,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0];
  for(let f=0;f<frames;f++){if(signal?.aborted)throw Error('キャンセルしました');const leaves=author.frame(times[f]);if(leaves.length>p.profile.maxDraws)throw Error('描画数の予算を超えています');for(let leaf of leaves){
+ const fit=p.fit==='contain'?Math.min(480/p.width,360/p.height):Math.max(480/p.width,360/p.height),visible=[-240/fit,-180/fit,480/fit,360/fit],sb=transformedBounds(leaf.bounds,leaf.m);
+ if(sb[0]>visible[0]+visible[2]||sb[1]>visible[1]+visible[3]||sb[0]+sb[2]<visible[0]||sb[1]+sb[3]<visible[1])continue;
+ // Assets outside Scratch's size/fence range are clipped locally at export only.
+ if(!leaf.penPath&&(sb[2]*fit>710||sb[3]*fit>530||Math.abs(leaf.m[4]*fit)>650||Math.abs(leaf.m[5]*fit)>590)){
+  const plan=effectPlan(groupPlan([{plan:leaf.plan||svgPlan(leaf.body,leaf.bounds),m:leaf.m,alpha:1,blend:'sourceOver'}]),{kind:'clip',rect:visible});
+  leaf={...leaf,plan,body:'',bounds:plan.bounds,m:I,needsRaster:false};
+ }
  if(leaf.penPath&&!leaf.plan&&leaf.alpha>=1&&leaf.penPath.rgba[3]>=1){const pth=leaf.penPath,m=leaf.m,scale=Math.hypot(m[0],m[1]),same=Math.abs(m[0]*m[2]+m[1]*m[3])<1e-7&&Math.abs(scale-Math.hypot(m[2],m[3]))<1e-7,fit=p.fit==='contain'?Math.min(480/p.width,360/p.height):Math.max(480/p.width,360/p.height),width=pth.width*(pth.space==='screen'?1:scale),segments=pth.chunks.reduce((n,c)=>n+c.length-1,0);
  if((same||pth.space==='screen')&&width*fit>=1&&width*fit<=480&&segments<256){let ordinal=0;for(const chunk of pth.chunks)for(let j=1;j<chunk.length;j++){const key=leaf.key+'/line'+ordinal++,pair=clipLine(point(m,chunk[j-1]),point(m,chunk[j]),[-240/fit-width/2-1,-180/fit-width/2-1,240/fit+width/2+1,180/fit+width/2+1]);if(!pair)continue;const v=[...base];v[8]=width;v[9]=rgbInt(pth.rgba);v.splice(16,4,...pair.flat());let entry=map.get(key);if(!entry){entry={key,order:leaf.order+'/line'+String(ordinal).padStart(5,'0'),nodeId:leaf.nodeId,values:new Map(),asset:0,prim:2};map.set(key,entry)}entry.values.set(f,v)}continue}}
  let m=leaf.m,s=Math.hypot(m[0],m[1]),theta=Math.atan2(m[1],m[0]),body=leaf.body,bounds=leaf.bounds,plan=leaf.plan;if(s<1e-10||leaf.alpha<=0)continue;
