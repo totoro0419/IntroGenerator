@@ -10,7 +10,10 @@ try{
  await page.waitForSelector('#add-type option[value="depth"]',{state:'attached',timeout:10000});
  await page.locator('#add-type').selectOption('depth');
  await page.locator('#add').click();
- await page.waitForFunction(()=>{const s=window.__IG?.state,n=s?.p?.nodes.find(x=>x.id===s.id);return n?.type==='repeater'&&n.name==='Depth zoom background'},undefined,{timeout:30000});
+ try{await page.waitForFunction(()=>{const s=window.__IG?.state,n=s?.p?.nodes.find(x=>x.id===s.id);return n?.type==='repeater'&&n.name==='Depth zoom background'},undefined,{timeout:5000})}catch{
+  const diagnostic=await page.evaluate(()=>{const s=window.__IG?.state,n=s?.p?.nodes.find(x=>x.id===s?.id);return {revision:s?.revision,compiledRevision:s?.compiledRevision,selected:n?{id:n.id,type:n.type,name:n.name}:null,status:document.querySelector('#status')?.textContent||'',addType:document.querySelector('#add-type')?.value,nodes:s?.p?.nodes.slice(-5).map(x=>({id:x.id,type:x.type,name:x.name,parent:x.parent}))}});
+  throw Error('PDF-F16 add diagnostic '+JSON.stringify(diagnostic));
+ }
  await page.waitForSelector('[data-depth-background-controls]',{timeout:10000});
  const repeaterId=await page.evaluate(()=>window.__IG.state.id);
  const templateId=await page.evaluate(id=>window.__IG.state.p.nodes.find(n=>n.id===id).data.template,repeaterId);
