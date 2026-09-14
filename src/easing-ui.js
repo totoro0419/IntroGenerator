@@ -1,41 +1,42 @@
 import './easing-ui.css';
+import {validateSource} from './compiler.js';
+import {defaultCurve,cloneLayer} from './easing-stack.js';
 
-const $=(s,r=document)=>r.querySelector(s);
-const all=(s,r=document)=>[...r.querySelectorAll(s)];
-const families=[['linear','Linear'],['sine','Sine'],['quad','Quad'],['cubic','Cubic'],['quart','Quart'],['quint','Quint'],['expo','Expo'],['circ','Circ'],['back','Back'],['elastic','Elastic'],['bounce','Bounce'],['power','Power'],['bezier','Cubic Bezier'],['hold','Hold']];
-const dirs=[['In','In'],['Out','Out'],['InOut','InOut']];
-let scheduled=false;
+const $=(s,r=document)=>r.querySelector(s),all=(s,r=document)=>[...r.querySelectorAll(s)];
+const families=[['linear','Linear'],['sine','Sine'],['quad','Quad'],['cubic','Cubic'],['quart','Quart'],['quint','Quint'],['expo','Expo'],['circ','Circ'],['back','Back'],['elastic','Elastic'],['bounce','Bounce'],['power','Power'],['bezier','Cubic Bezier'],['samples','Samples'],['hold','Hold']];
+const dirs=[['In','In'],['Out','Out'],['InOut','InOut']];let scheduled=false;
+const state=()=>window.__IG?.state;
+const selected=()=>{const s=state();return s?.p?.nodes.find(n=>n.id===s.id)};
+const layerId=()=>`ease${crypto.randomUUID().replaceAll('-','')}`;
 
-function parseKind(kind){
- if(kind==='linear'||kind==='hold'||kind==='bezier')return {family:kind,direction:null};
- for(const direction of ['InOut','In','Out'])if(kind.endsWith(direction))return {family:kind.slice(0,-direction.length),direction};
- return {family:'linear',direction:null};
-}
-function makeKind(family,direction){return family==='linear'||family==='hold'||family==='bezier'?family:family+(direction||'InOut')}
+function parseKind(kind){if(['linear','hold','bezier','samples'].includes(kind))return{family:kind,direction:null};for(const d of ['InOut','In','Out'])if(kind.endsWith(d))return{family:kind.slice(0,-d.length),direction:d};return{family:'linear',direction:null}}
+function makeKind(family,direction){return['linear','hold','bezier','samples'].includes(family)?family:family+(direction||'InOut')}
+function parameterSpec(curve){const k=curve.kind;if(k.startsWith('power'))return[['power','強さ',.01,null,.05]];if(k.startsWith('back'))return[['overshoot','Overshoot',null,null,.05]];if(k.startsWith('elastic'))return[['period','振動周期',.001,null,.01]];if(k==='bezier')return[['x1','X1',0,1,.05],['y1','Y1',null,null,.05],['x2','X2',0,1,.05],['y2','Y2',null,null,.05]];return[]}
 function nativeParamRow(row){const next=row.nextElementSibling;if(!next)return null;const td=$('td[colspan="5"]',next);return td&&$('label input',td)?next:null}
-function changeNative(select,value){select.value=value;select.dispatchEvent(new Event('change',{bubbles:true}))}
-function parameterSpec(kind){
- if(kind.startsWith('power'))return [['power','強さ',0.01,null,.05]];
- if(kind.startsWith('back'))return [['overshoot','Overshoot',null,null,.05]];
- if(kind.startsWith('elastic'))return [['period','振動周期',0.001,null,.01]];
- if(kind==='bezier')return [['x1','X1',0,1,.05],['y1','Y1',null,null,.05],['x2','X2',0,1,.05],['y2','Y2',null,null,.05]];
- return []
+function status(message,error=false){const el=$('#status');if(!el)return;el.textContent=message;el.style.background=error?'#843d32':'#263030';clearTimeout(status.timer);status.timer=setTimeout(()=>{if(el.textContent===message)el.textContent=''},error?12000:4000)}
+async function persist(p){const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('IntroGenerator',1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('projects'))r.result.createObjectStore('projects')};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});await new Promise((resolve,reject)=>{const tx=db.transaction('projects','readwrite');tx.objectStore('projects').put(p,'current');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});db.close();const save=$('#save-state');if(save)save.textContent='保存済み'}
+function refreshMainUI(){($('.layer.selected .name')||$('.layer .name'))?.click()}
+async function transact(mutator){const s=state();if(!s?.p)return false;const previous=structuredClone(s.p);try{mutator(s.p);validateSource(s.p);s.undo.push(previous);if(s.undo.length>40)s.undo.shift();s.redo=[];s.revision++;await persist(s.p);refreshMainUI();await window.__IG.rebuild();queue();return true}catch(e){s.p=previous;refreshMainUI();queue();status(e.message,true);return false}}
+
+function referencedTracks(){const s=state(),root=selected(),out=new Set(),seen=new Set();if(!s?.p||!root)return out;const exps=new Map(s.p.expressions.map(e=>[e.id,e]));function walk(v){if(!v||typeof v!=='object'||seen.has(v))return;seen.add(v);if(typeof v.expr==='string'){const e=exps.get(v.expr);if(e?.op==='track')out.add(e.track)}for(const x of Array.isArray(v)?v:Object.values(v))walk(x)}walk(root);return out}
+function matchingTrack(rows){const s=state();if(!s?.p)return null,near=(a,b)=>Math.abs(a-b)<1e-6,refs=referencedTracks();const pool=(refs.size?s.p.tracks.filter(t=>refs.has(t.id)):s.p.tracks);const candidates=pool.filter(tr=>tr.keys.length===rows.length&&rows.every((r,i)=>{const k=tr.keys[i],a=s.p.timeAnchors.find(a=>a.target==='keyframe'&&a.owner===tr.id&&a.key===k.id),ti=$('input[aria-label="Key位置"]',r),vi=$('input[aria-label="Key値"]',r),unit=$('select[aria-label="時間単位"]',r);return ti&&vi&&unit&&near(Number(ti.value),a?.value??k.time)&&near(Number(vi.value),k.value)&&unit.value===(a?.unit||'seconds')}));return candidates.length===1?candidates[0]:null}
+function findKey(trackId,keyId){const p=state().p,tr=p.tracks.find(t=>t.id===trackId);return tr?.keys.find(k=>k.id===keyId)}
+function replaceCurve(layer,family,direction){const old=layer.curve,{family:oldFamily}=parseKind(old.kind),kind=makeKind(family,direction),next=defaultCurve(kind);if(oldFamily===family)for(const k of Object.keys(next))if(k!=='kind'&&k in old)next[k]=old[k];layer.curve=next}
+
+function labelledControl(text,control){const label=document.createElement('label');label.textContent=text;label.append(control);return label}
+function button(text,label,action,disabled=false){const b=document.createElement('button');b.type='button';b.className='mini';b.textContent=text;b.setAttribute('aria-label',label);b.disabled=disabled;b.onclick=action;return b}
+function renderLayer(container,track,key,layer,index){const field=document.createElement('fieldset');field.className='easing-layer';field.dataset.layerId=layer.id;const legend=document.createElement('legend');legend.textContent=`Layer ${index+1}`;field.append(legend);const top=document.createElement('div');top.className='easing-layer-grid';
+ const enabled=document.createElement('input');enabled.type='checkbox';enabled.checked=layer.enabled;enabled.setAttribute('aria-label',`Layer ${index+1} 有効`);enabled.onchange=()=>transact(()=>findKey(track.id,key.id).ease.layers.find(x=>x.id===layer.id).enabled=enabled.checked);const enabledWrap=labelledControl('有効',enabled);enabledWrap.className='easing-enabled';
+ const {family,direction}=parseKind(layer.curve.kind),familySelect=document.createElement('select');familySelect.setAttribute('aria-label',`Layer ${index+1} Easing種類`);for(const [value,title] of families){const o=document.createElement('option');o.value=value;o.textContent=title;familySelect.append(o)}familySelect.value=family;
+ const dirSelect=document.createElement('select');dirSelect.setAttribute('aria-label',`Layer ${index+1} Easing方向`);for(const [value,title] of dirs){const o=document.createElement('option');o.value=value;o.textContent=title;dirSelect.append(o)}dirSelect.value=direction||'InOut';dirSelect.disabled=['linear','hold','bezier','samples'].includes(family);
+ familySelect.onchange=()=>transact(()=>{const l=findKey(track.id,key.id).ease.layers.find(x=>x.id===layer.id);replaceCurve(l,familySelect.value,dirSelect.value)});dirSelect.onchange=()=>transact(()=>{const l=findKey(track.id,key.id).ease.layers.find(x=>x.id===layer.id);replaceCurve(l,familySelect.value,dirSelect.value)});
+ const weight=document.createElement('input');weight.type='number';weight.min='0';weight.step='.05';weight.value=layer.weight;weight.setAttribute('aria-label',`Layer ${index+1} Weight`);weight.onchange=()=>{const v=Number(weight.value);if(Number.isFinite(v)&&v>=0)transact(()=>findKey(track.id,key.id).ease.layers.find(x=>x.id===layer.id).weight=v)};
+ top.append(enabledWrap,labelledControl('種類',familySelect),labelledControl('方向',dirSelect),labelledControl('Weight',weight));field.append(top);
+ const specs=parameterSpec(layer.curve);if(specs.length){const params=document.createElement('div');params.className='easing-params';for(const [name,label,min,max,step] of specs){const input=document.createElement('input');input.type='number';input.step=String(step);if(min!==null)input.min=String(min);if(max!==null)input.max=String(max);input.value=layer.curve[name];input.setAttribute('aria-label',`Layer ${index+1} Easing ${label}`);input.onchange=()=>{const v=Number(input.value);if(!Number.isFinite(v)||min!==null&&v<min||max!==null&&v>max)return;transact(()=>findKey(track.id,key.id).ease.layers.find(x=>x.id===layer.id).curve[name]=v)};params.append(labelledControl(label,input))}field.append(params)}else if(layer.curve.kind==='samples'){const help=document.createElement('p');help.className='help';help.textContent=`Imported curve · ${layer.curve.points?.length||0} samples`;field.append(help)}
+ const actions=document.createElement('div');actions.className='easing-layer-actions';const count=key.ease.layers.length;actions.append(button('↑',`Layer ${index+1}を上へ`,()=>transact(()=>{const a=findKey(track.id,key.id).ease.layers,[x]=a.splice(index,1);a.splice(index-1,0,x)}),index===0),button('↓',`Layer ${index+1}を下へ`,()=>transact(()=>{const a=findKey(track.id,key.id).ease.layers,[x]=a.splice(index,1);a.splice(index+1,0,x)}),index===count-1),button('複製',`Layer ${index+1}を複製`,()=>transact(()=>{const a=findKey(track.id,key.id).ease.layers;a.splice(index+1,0,cloneLayer(a[index],layerId()))})),button('削除',`Layer ${index+1}を削除`,()=>transact(()=>findKey(track.id,key.id).ease.layers.splice(index,1))));field.append(actions);container.append(field)
 }
-function patchRow(row){
- const raw=$('select[aria-label="Easing"]',row);if(!raw||raw.dataset.f09Patched)return;raw.dataset.f09Patched='1';
- const {family,direction}=parseKind(raw.value),cell=raw.closest('td');if(!cell)return;
- raw.classList.add('easing-native');raw.tabIndex=-1;raw.setAttribute('aria-hidden','true');
- const editor=document.createElement('div');editor.className='easing-editor';editor.dataset.kind=raw.value;
- const familyLabel=document.createElement('label');familyLabel.textContent='種類';const familySelect=document.createElement('select');familySelect.setAttribute('aria-label','Easing種類');for(const [value,title] of families){const option=document.createElement('option');option.value=value;option.textContent=title;familySelect.append(option)}familySelect.value=family;familyLabel.append(familySelect);
- const dirLabel=document.createElement('label');dirLabel.textContent='方向';const dirSelect=document.createElement('select');dirSelect.setAttribute('aria-label','Easing方向');for(const [value,title] of dirs){const option=document.createElement('option');option.value=value;option.textContent=title;dirSelect.append(option)}dirSelect.value=direction||'InOut';dirSelect.disabled=['linear','hold','bezier'].includes(family);dirLabel.append(dirSelect);
- editor.append(familyLabel,dirLabel);
- const paramRow=nativeParamRow(row),nativeInputs=paramRow?all('label input',paramRow):[];if(paramRow)paramRow.hidden=true;
- const specs=parameterSpec(raw.value);if(specs.length){const params=document.createElement('div');params.className='easing-params';specs.forEach(([name,label,min,max,step],i)=>{const native=nativeInputs[i];if(!native)return;const wrap=document.createElement('label');wrap.textContent=label;const input=document.createElement('input');input.type='number';input.step=String(step);if(min!==null)input.min=String(min);if(max!==null)input.max=String(max);input.value=native.value;input.setAttribute('aria-label',`Easing ${label}`);input.onchange=()=>{const value=Number(input.value);if(!Number.isFinite(value))return;if(min!==null&&value<=0&&name!=='x1'&&name!=='x2')return;if(min!==null&&value<min||max!==null&&value>max)return;native.value=String(value);native.dispatchEvent(new Event('change',{bubbles:true}))};wrap.append(input);params.append(wrap)});editor.append(params)}
- familySelect.onchange=()=>changeNative(raw,makeKind(familySelect.value,dirSelect.value));
- dirSelect.onchange=()=>changeNative(raw,makeKind(familySelect.value,dirSelect.value));
- cell.prepend(editor)
-}
-function mount(){if(!$('#dialog')?.open||!$('#dialog-title')?.textContent.includes('キーフレーム'))return;all('#keys > tr').filter(r=>$('select[aria-label="Easing"]',r)).forEach(patchRow)}
+function patchRow(row,track,key){const raw=$('select[aria-label="Easing"]',row),cell=raw?.closest('td');if(!raw||!cell)return;if(!raw.querySelector('option[value="stack"]')){const o=document.createElement('option');o.value='stack';o.textContent='Stack';raw.append(o)}raw.value='stack';raw.classList.add('easing-native');raw.tabIndex=-1;raw.setAttribute('aria-hidden','true');nativeParamRow(row)?.setAttribute('hidden','');cell.querySelector('.easing-stack-editor')?.remove();const editor=document.createElement('div');editor.className='easing-stack-editor';editor.dataset.keyId=key.id;const head=document.createElement('div');head.className='easing-stack-head';const title=document.createElement('strong');title.textContent=`Easing Stack · ${key.ease.layers.length}`;const add=button('＋ Easing','Easing Layerを追加',()=>transact(()=>findKey(track.id,key.id).ease.layers.push({id:layerId(),enabled:true,weight:1,curve:{kind:'linear'}})));head.append(title,add);editor.append(head);if(!key.ease.layers.length){const empty=document.createElement('p');empty.className='help';empty.textContent='Layerなし = Linear';editor.append(empty)}key.ease.layers.forEach((layer,i)=>renderLayer(editor,track,key,layer,i));cell.prepend(editor)}
+function mount(){if(!$('#dialog')?.open||!$('#dialog-title')?.textContent.includes('キーフレーム'))return;const rows=all('#keys > tr').filter(r=>$('select[aria-label="Easing"]',r));if(!rows.length)return;const track=matchingTrack(rows);if(!track)return;rows.forEach((r,i)=>patchRow(r,track,track.keys[i]))}
 function queue(){if(scheduled)return;scheduled=true;queueMicrotask(()=>{scheduled=false;mount()})}
 async function boot(){for(let i=0;i<300&&!window.__IG;i++)await new Promise(r=>setTimeout(r,20));const dialog=$('#dialog');if(!dialog)return;new MutationObserver(queue).observe(dialog,{subtree:true,childList:true});document.addEventListener('click',e=>{if(e.target.closest('.key-button'))setTimeout(queue,0)},true);mount()}
 boot();
