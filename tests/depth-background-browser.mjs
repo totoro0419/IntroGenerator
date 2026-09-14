@@ -60,6 +60,7 @@ try{
  const persisted=await inspect();if(Math.abs(persisted.speed-.65)>1e-9||persisted.cameraSpeed!==0||Math.abs(persisted.step-overlapChanged.step)>1e-9)throw Error('PDF-F16 persistence failed: '+JSON.stringify(persisted));
 
  await page.setViewportSize({width:390,height:844});
+ await page.locator('.mobile-tabs button[data-pane="layers"]').click();
  await page.locator('#layers .name').filter({hasText:'Depth zoom background'}).first().click();
  await page.locator('.mobile-tabs button[data-pane="inspector"]').click();
  await page.waitForSelector('[data-depth-background-controls]');
