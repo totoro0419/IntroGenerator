@@ -1,5 +1,12 @@
 import {I,mul,trs,point,inverse,mod,clamp,random,samplePath} from './math.js';
 
+function rectIntersectsQuad(x0,y0,x1,y1,quad){
+ const rect=[[x0,y0],[x1,y0],[x1,y1],[x0,y1]],axes=[[1,0],[0,1]];
+ for(let i=0;i<quad.length;i++){const a=quad[i],b=quad[(i+1)%quad.length],dx=b[0]-a[0],dy=b[1]-a[1];if(Math.abs(dx)+Math.abs(dy)>1e-12)axes.push([-dy,dx])}
+ for(const axis of axes){let qMin=Infinity,qMax=-Infinity,rMin=Infinity,rMax=-Infinity;for(const p of quad){const v=p[0]*axis[0]+p[1]*axis[1];qMin=Math.min(qMin,v);qMax=Math.max(qMax,v)}for(const p of rect){const v=p[0]*axis[0]+p[1]*axis[1];rMin=Math.min(rMin,v);rMax=Math.max(rMax,v)}if(qMax<rMin-1e-9||rMax<qMin-1e-9)return false}
+ return true;
+}
+
 // Placement always uses the repeater's time. Delay/phase changes only template time.
 export function repeatInstances(author,n,c,m,z,space,cameraTime,cameraId,cameraRootTime){
  const d=n.data,e=v=>author.value(v,c),scatter=n.type==='scatter';
@@ -15,8 +22,12 @@ export function repeatInstances(author,n,c,m,z,space,cameraTime,cameraId,cameraR
    const b=leaf.bounds,tm=mul(bi,leaf.m);for(const p of [[b[0],b[1]],[b[0]+b[2],b[1]],[b[0],b[1]+b[3]],[b[0]+b[2],b[1]+b[3]]]){const q=point(tm,p);left=Math.min(left,q[0]);right=Math.max(right,q[0]);bottom=Math.min(bottom,q[1]);top=Math.max(top,q[1])}
   }
   const lo=[Math.floor(Math.min(...ps.map(p=>p[0]))-right-scroll[0])-1,Math.floor(Math.min(...ps.map(p=>p[1]))-top-scroll[1])-1],hi=[Math.ceil(Math.max(...ps.map(p=>p[0]))-left-scroll[0])+1,Math.ceil(Math.max(...ps.map(p=>p[1]))-bottom-scroll[1])+1];
-  N=(hi[0]-lo[0]+1)*(hi[1]-lo[1]+1);if(N>d.maxCount)throw Error(`画面を覆う格子は${N}個必要です。最大個数を増やしてください`);
-  cells=[];for(let y=lo[1];y<=hi[1];y++)for(let x=lo[0];x<=hi[0];x++)cells.push({x,y,m:mul(bm,trs(x+scroll[0],y+scroll[1]))});
+  const candidateN=(hi[0]-lo[0]+1)*(hi[1]-lo[1]+1);if(candidateN>d.maxCount)throw Error(`画面を覆う格子は${candidateN}個必要です。最大個数を増やしてください`);
+  cells=[];for(let y=lo[1];y<=hi[1];y++)for(let x=lo[0];x<=hi[0];x++){
+   const tx=x+scroll[0],ty=y+scroll[1];if(!rectIntersectsQuad(tx+left,ty+bottom,tx+right,ty+top,ps))continue;
+   cells.push({x,y,m:mul(bm,trs(tx,ty))});
+  }
+  N=cells.length;
  }
  if(N>author.p.profile.maxDraws)throw Error('複製が描画予算を超えています');
  const out=[];for(let i=0;i<N;i++){
