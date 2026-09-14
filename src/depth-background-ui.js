@@ -118,25 +118,24 @@ function augment(){
  if(cameraInfo)numberField(grid,'Camera Zoom速度',cameraInfo.speed.args[0],value=>commit(()=>{if(value<-1||value>1)throw Error('Camera Zoom速度は-1〜1で指定してください');const c=activeCamera(S.p),cp=cameraParts(S.p,c);if(!cp)throw Error('Camera Zoom設定が見つかりません');cp.speed.args[0]=value}),{step:'.01',min:-1,max:1});
  const actions=document.createElement('div');actions.className='row full';
  const editPattern=document.createElement('button');editPattern.className='mini';editPattern.textContent='模様を編集';editPattern.onclick=()=>selectLayer(n.data.template);
- const editCamera=document.createElement('button');editCamera.className='mini';editCamera.textContent=camera?`Cameraを編集`:'Cameraなし';editCamera.disabled=!camera;editCamera.onclick=()=>camera&&selectLayer(camera.id);
+ const editCamera=document.createElement('button');editCamera.className='mini';editCamera.textContent=camera?'Cameraを編集':'Cameraなし';editCamera.disabled=!camera;editCamera.onclick=()=>camera&&selectLayer(camera.id);
  actions.append(editPattern,editCamera);box.append(title,help,grid,actions);fields.append(box);
 }
 
 function installAddEntry(){
  const select=$('#add-type'),add=$('#add');if(!select||!add)return false;
  if(!select.querySelector('option[value="depth"]')){const option=document.createElement('option');option.value='depth';option.textContent='奥行き拡大背景';const scroll=select.querySelector('option[value="scroll"]');scroll?.after(option)??select.append(option)}
- let pending=false;
- add.addEventListener('click',()=>{
-  if(select.value!=='depth'||pending)return;
+ if(add.dataset.depthHandler==='1')return true;add.dataset.depthHandler='1';
+ add.addEventListener('click',event=>{
+  if(select.value!=='depth')return;
+  event.preventDefault();event.stopImmediatePropagation();
   const S=state();if(!S?.p)return;
-  const revision=S.revision;pending=true;select.value='repeater';
-  queueMicrotask(()=>{
-   try{
-    const current=state();if(current.revision===revision)throw Error('奥行き背景を追加できませんでした');
-    const n=current.p.nodes.find(x=>x.id===current.id);if(n?.type!=='repeater')throw Error('奥行き背景のRepeaterを作成できませんでした');
-    configureDepthBackground(current.p,n);validateSource(current.p);select.value='depth';forceRenderThroughHistory();
-   }catch(error){select.value='depth';const current=state();if(current?.revision!==revision&&!$('#undo')?.disabled){$('#undo').click();current.redo=[]}setError(error.message)}finally{pending=false}
+  commit(()=>{
+   const target=S.p.nodes.find(n=>n.id===S.id),parent=target&&['group','composition'].includes(target.type)?target.id:S.p.root;
+   const proto=node('shape','Pattern source',null);S.p.nodes.push(proto);S.p.definitions.push(proto.id);
+   const n=node('repeater','Depth zoom background');n.data.template=proto.id;addNode(S.p,n,parent);configureDepthBackground(S.p,n);S.id=n.id;
   });
+  select.value='depth';
  },true);
  return true;
 }
