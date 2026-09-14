@@ -38,5 +38,6 @@ export function shapeGeometry(n,e){const d=n.data,p=Object.fromEntries(Object.en
  case 'blob':case 'petal':body=`<path d="M${-r},0 C${-r},${r} ${r},${r} ${r},0 C${r},${-r} ${-r},${-r*.5} ${-r},0Z"/>`;break;
  default:body=`<rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="${p.cornerRadius}"/>`;
  }
+ if(d.shape==='frame'||d.shape==='bracket'){const pad=d.stroke?.enabled?Math.max(0,e(d.stroke.width))/2:0;bounds=[-w/2-pad,-h/2-pad,w+pad*2,h+pad*2]}
  const fill=paintSVG(d.paint,e),st=d.stroke;let style=fill.attrs+` color="${d.paint.kind==='solid'?hex(d.paint.rgba.map(e)):'#66ccff'}"`;if(st.enabled)style+=` stroke="${hex((st.paint.rgba||[1,1,1,1]).map(e))}" stroke-width="${e(st.width)}" stroke-linejoin="${st.join}"`;return {body:`${fill.defs}<g ${style}>${body}</g>`,bounds}
 }
