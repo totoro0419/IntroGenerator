@@ -9,7 +9,6 @@ const $=(s,r=document)=>r.querySelector(s);
 const all=(s,r=document)=>[...r.querySelectorAll(s)];
 const state=()=>window.__IG?.state;
 const selected=()=>{const s=state();return s?.p?.nodes.find(n=>n.id===s.id)};
-let scheduled=false;
 
 function status(message,error=false){
  const el=$('#status');if(!el)return;el.textContent=message;el.style.background=error?'#843d32':'#263030';
@@ -47,7 +46,8 @@ function reopenKeyDialog(label){
 }
 
 async function addKey(){
- const s=state(),track=matchingTrack(),node=selected();if(!s?.p||!track)return;
+ const s=state(),track=matchingTrack(),node=selected();
+ if(!s?.p||!track){status('キーフレームのTrackを特定できません',true);return}
  const time=localTime(s,node);if(track.keys.some(k=>Math.abs(k.time-time)<1e-9))return;
  const previous=structuredClone(s.p),label=($('#dialog-title')?.textContent||'').replace(/\s*·\s*キーフレーム.*$/,'');
  try{
@@ -59,11 +59,10 @@ async function addKey(){
  }catch(e){s.p=previous;status(e.message,true);$('.layer.selected .name')?.click()}
 }
 
-function mount(){
- const button=$('#new-key'),active=$('#dialog')?.open&&$('#dialog-title')?.textContent.includes('キーフレーム');if(!active||!button)return;
- if(button.dataset.trackValuePatched)return;button.dataset.trackValuePatched='1';
- button.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();addKey()},true)
-}
-function queue(){if(scheduled)return;scheduled=true;queueMicrotask(()=>{scheduled=false;mount()})}
-async function boot(){for(let i=0;i<300&&!window.__IG;i++)await new Promise(r=>setTimeout(r,20));const app=$('#app');if(!app)return;new MutationObserver(queue).observe(app,{subtree:true,childList:true});document.addEventListener('click',e=>{if(e.target.closest('.key-button'))setTimeout(queue,0)},true);mount()}
-boot();
+// Capture globally so an immediate click after the dialog opens cannot race a MutationObserver.
+document.addEventListener('click',e=>{
+ const button=e.target.closest?.('#new-key');
+ if(!button||!$('#dialog')?.open||!$('#dialog-title')?.textContent.includes('キーフレーム'))return;
+ button.dataset.trackValuePatched='1';
+ e.preventDefault();e.stopImmediatePropagation();addKey()
+},true);
