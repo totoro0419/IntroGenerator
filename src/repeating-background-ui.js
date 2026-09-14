@@ -32,11 +32,13 @@ function numberField(host,node,path,label){
 
 function augment(){
  const S=state(),root=$('#inspector');if(!S?.p||!root)return;
- root.querySelector('[data-repeating-background-controls]')?.remove();
- const node=S.p.nodes.find(n=>n.id===S.id);if(node?.type!=='repeater'||node.data.mode!=='lattice')return;
+ const node=S.p.nodes.find(n=>n.id===S.id),existing=root.querySelector('[data-repeating-background-controls]');
+ if(node?.type!=='repeater'||node.data.mode!=='lattice'){existing?.remove();return}
+ if(existing?.dataset.nodeId===node.id)return;
+ existing?.remove();
  const panel=[...root.querySelectorAll('details.section')].find(section=>section.querySelector(':scope > summary')?.textContent==='繰り返し');
  const fields=panel?.querySelector(':scope > .fields');if(!fields)return;
- const box=document.createElement('div');box.dataset.repeatingBackgroundControls='';box.className='full';
+ const box=document.createElement('div');box.dataset.repeatingBackgroundControls='';box.dataset.nodeId=node.id;box.className='full';
  const title=document.createElement('strong');title.textContent='格子の間隔・方向';
  const help=document.createElement('p');help.className='help';help.textContent='2本の格子軸で間隔と向きを決めます。スクロール X/Y はこの格子座標に沿った移動量です。';
  const grid=document.createElement('div');grid.className='fields';
