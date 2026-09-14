@@ -5,7 +5,7 @@ export const I=[1,0,0,1,0,0];
 export function mul(a,b){return [a[0]*b[0]+a[2]*b[1],a[1]*b[0]+a[3]*b[1],a[0]*b[2]+a[2]*b[3],a[1]*b[2]+a[3]*b[3],a[0]*b[4]+a[2]*b[5]+a[4],a[1]*b[4]+a[3]*b[5]+a[5]]}
 export function trs(x=0,y=0,sx=1,sy=1,d=0,ax=0,ay=0){const c=Math.cos(rad(d)),s=Math.sin(rad(d));return [c*sx,s*sx,-s*sy,c*sy,x-c*sx*ax+s*sy*ay,y-s*sx*ax-c*sy*ay]}
 export const point=(m,p)=>[m[0]*p[0]+m[2]*p[1]+m[4],m[1]*p[0]+m[3]*p[1]+m[5]];
-export function ease(e,u){u=clamp(u);const k=e?.kind||'linear';if(k==='hold')return 0;if(k==='linear')return u;
+export function ease(e,u){u=clamp(u);const k=e?.kind||'linear';if(k==='hold')return 0;if(k==='linear')return u;if(u===0)return 0;if(u===1)return 1;
  if(k==='samples'){return lerpKeys(e.points.map(([time,value])=>({time,value,ease:{kind:'linear'}})),u,0)}
  if(k==='bezier'){let l=0,h=1,v=.5;for(let i=0;i<28;i++){v=(l+h)/2;const x=3*(1-v)**2*v*e.x1+3*(1-v)*v*v*e.x2+v**3;if(x<u)l=v;else h=v}return 3*(1-v)**2*v*e.y1+3*(1-v)*v*v*e.y2+v**3}
  const out=k.endsWith('Out')&&!k.endsWith('InOut'),both=k.endsWith('InOut');let name=k.replace(/InOut|In|Out/g,''),power={quad:2,cubic:3,quart:4,quint:5,power:e.power||2}[name];
