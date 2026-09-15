@@ -39,6 +39,7 @@ jobs:
           node tests/camera-echo-browser.mjs
           node tests/repeating-background-browser.mjs
           node tests/generators-browser.mjs
+          node tests/pdf-effects-browser.mjs
           node tests/scratch-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
