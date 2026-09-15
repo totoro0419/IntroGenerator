@@ -21,6 +21,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - run: node --check src/pdf-effects-ui.js
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - name: Browser smoke and sb3 roundtrip
