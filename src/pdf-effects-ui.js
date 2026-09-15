@@ -98,7 +98,7 @@ function appearanceUI(host,p,repeater){
 function particleUI(host,p,n){
  const assets=imageAssets(p).map(a=>[a.id,a.id]);const a=details(host,'Particle 素材 · PDF-F19/F20');
  n.data.assets.forEach((id,i)=>{const row=document.createElement('div');row.className='full';row.append(optionSelect(assets,id,v=>commit(()=>n.data.assets[i]=v),`素材 ${i+1}`));if(n.data.assets.length>1)row.append(action('削除',()=>commit(()=>n.data.assets.splice(i,1))));a.append(row)});
- a.append(action('＋ 素材',()=>commit(()=>n.data.assets.push(assets[0]?.[0]||'shardAsset')));
+ a.append(action('＋ 素材',()=>commit(()=>n.data.assets.push(assets[0]?.[0]||'shardAsset'))));
  const b=details(host,'Burst / 分布 · PDF-F19/F20');n.data.bursts.forEach((burst,i)=>{const row=document.createElement('div');row.className='fields full';row.append(numberInput(burst.time,v=>commit(()=>burst.time=v),`Burst ${i+1} 時刻`),numberInput(burst.count,v=>commit(()=>burst.count=Math.max(0,Math.floor(v))),'個数','1'));if(n.data.bursts.length>1)row.append(action('削除',()=>commit(()=>n.data.bursts.splice(i,1))));b.append(row)});b.append(action('＋ Burst',()=>commit(()=>n.data.bursts.push({time:0,count:12}))));
  if(n.data.radialLaunch){const row=document.createElement('div');row.className='row';row.append(action('ランダム配置',()=>commit(()=>n.data.radialLaunch.distribution='random')),action('均等分散',()=>commit(()=>n.data.radialLaunch.distribution='distributed')),action('Seed変更',()=>commit(()=>n.data.seed=(n.data.seed+1)%9007199254740991)));b.append(row)}
 }
