@@ -92,8 +92,14 @@ try{
  const afterMove=await sample(1.25);
  if(afterMove.some((v,i)=>Math.abs(v-beforeMove[i])>1e-8))throw Error('PDF-F17 Scene move changed internal speed sections: '+JSON.stringify({beforeMove,afterMove}));
  state=await inspect();if(JSON.stringify(state.keys.map(k=>k.time))!==JSON.stringify([0,2,4]))throw Error('PDF-F17 Scene move rewrote local key times: '+JSON.stringify(state));
- await page.locator('#undo').click();await page.waitForFunction(id=>window.__IG.state.p.nodes.find(n=>n.id===id).time.start===0,sceneId,{timeout:10000});
- await page.locator('#redo').click();await page.waitForFunction(id=>Math.abs(window.__IG.state.p.nodes.find(n=>n.id===id).time.start-1.25)<1e-9,sceneId,{timeout:10000});
+ const historyBeforeUndo=await page.evaluate(sceneId=>{const s=window.__IG.state,start=p=>p?.nodes.find(n=>n.id===sceneId)?.time.start;return{current:start(s.p),undoCount:s.undo.length,redoCount:s.redo.length,undoTop:start(s.undo.at(-1)),undoPrev:start(s.undo.at(-2))}},sceneId);
+ if(historyBeforeUndo.undoTop!==0)throw Error('PDF-F17 Scene move did not create the expected Undo snapshot: '+JSON.stringify(historyBeforeUndo));
+ await page.locator('#undo').click();await page.waitForTimeout(100);
+ const historyAfterUndo=await page.evaluate(sceneId=>{const s=window.__IG.state,start=p=>p?.nodes.find(n=>n.id===sceneId)?.time.start;return{current:start(s.p),undoCount:s.undo.length,redoCount:s.redo.length,undoTop:start(s.undo.at(-1)),redoTop:start(s.redo.at(-1))}},sceneId);
+ if(historyAfterUndo.current!==0)throw Error('PDF-F17 Undo did not restore the Scene start: '+JSON.stringify({historyBeforeUndo,historyAfterUndo}));
+ await page.locator('#redo').click();await page.waitForTimeout(100);
+ const historyAfterRedo=await page.evaluate(sceneId=>{const s=window.__IG.state,start=p=>p?.nodes.find(n=>n.id===sceneId)?.time.start;return{current:start(s.p),undoCount:s.undo.length,redoCount:s.redo.length,undoTop:start(s.undo.at(-1)),redoTop:start(s.redo.at(-1))}},sceneId);
+ if(Math.abs(historyAfterRedo.current-1.25)>1e-9)throw Error('PDF-F17 Redo did not restore the Scene move: '+JSON.stringify({historyBeforeUndo,historyAfterUndo,historyAfterRedo}));
  await page.waitForFunction(()=>window.__IG.state.compiledRevision===window.__IG.state.revision&&document.querySelector('#save-state')?.textContent==='保存済み',undefined,{timeout:90000});
 
  const roundtrip=await page.evaluate(async({sceneId,repeaterId})=>{
