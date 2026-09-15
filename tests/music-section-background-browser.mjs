@@ -85,7 +85,7 @@ try{
  if(Math.abs(rateA-rateB)<.05)throw Error('PDF-F17 section speeds did not differ: '+JSON.stringify({beforeMove,rateA,rateB}));
 
  // Moving the Scene shifts the envelope as a whole; internal local Key times remain unchanged.
- await page.locator('#layers .name').filter({hasText:'Scene'}).first().click();
+ await page.getByRole('button',{name:'Scene',exact:true}).click();
  await page.waitForSelector('.timing-node-anchor');
  const startInput=page.getByLabel('開始',{exact:true});await startInput.fill('1.25');await startInput.dispatchEvent('change');
  await page.waitForFunction(id=>Math.abs(window.__IG.state.p.nodes.find(n=>n.id===id).time.start-1.25)<1e-9,sceneId,{timeout:10000});
