@@ -9,6 +9,7 @@ const $=(s,r=document)=>r.querySelector(s);
 const all=(s,r=document)=>[...r.querySelectorAll(s)];
 const state=()=>window.__IG?.state;
 const selected=()=>{const s=state();return s?.p?.nodes.find(n=>n.id===s.id)};
+let activeTrackId=null;
 
 function status(message,error=false){
  const el=$('#status');if(!el)return;el.textContent=message;el.style.background=error?'#843d32':'#263030';
@@ -33,8 +34,15 @@ function nestedTrackBinding(binding,p){
  return walk(binding)
 }
 
+function trackIdForBinding(binding,p){
+ if(!binding?.expr)return null;
+ const e=p.expressions.find(x=>x.id===binding.expr);
+ return e?.op==='track'?e.track:null
+}
+
 function matchingTrack(){
  const s=state(),root=selected(),rows=all('#keys > tr').filter(r=>r.querySelector('select[aria-label="時間単位"]'));if(!s?.p||!root||!rows.length)return null;
+ if(activeTrackId){const active=s.p.tracks.find(t=>t.id===activeTrackId);if(active&&active.keys.length===rows.length)return active}
  const refs=referencedTracks(root,s.p),near=(a,b)=>Math.abs(a-b)<1e-6,pool=refs.size?s.p.tracks.filter(t=>refs.has(t.id)):s.p.tracks;
  const candidates=pool.filter(tr=>tr.keys.length===rows.length&&rows.every((r,i)=>{const k=tr.keys[i],a=s.p.timeAnchors.find(a=>a.target==='keyframe'&&a.owner===tr.id&&a.key===k.id),time=r.querySelector('input[aria-label="Key位置"]'),value=r.querySelector('input[aria-label="Key値"]'),unit=r.querySelector('select[aria-label="時間単位"]');return time&&value&&unit&&near(Number(time.value),a?.value??k.time)&&near(Number(value.value),k.value)&&unit.value===(a?.unit||'seconds')}));
  return candidates.length===1?candidates[0]:null
@@ -54,6 +62,7 @@ function reopenKeyDialog(label){
 async function addKey(){
  const s=state(),track=matchingTrack(),node=selected();
  if(!s?.p||!track){status('キーフレームのTrackを特定できません',true);return}
+ activeTrackId=track.id;
  const time=localTime(s,node);if(track.keys.some(k=>Math.abs(k.time-time)<1e-9))return;
  const previous=structuredClone(s.p),label=($('#dialog-title')?.textContent||'').replace(/\s*·\s*キーフレーム.*$/,'');
  try{
@@ -66,14 +75,16 @@ async function addKey(){
 }
 
 // The legacy dialog recognizes only a direct Track binding. F17 keeps the continuous base
-// flow as add(base, track), so briefly expose its existing nested Track while reopening the
-// Scroll X dialog. The authoring graph is restored before any asynchronous observer runs.
+// flow as add(base, track), so briefly expose its existing nested Track while opening the
+// Scroll X dialog. Remember the exact Track ID so Key insertion never depends on DOM matching.
 document.addEventListener('click',e=>{
  const button=e.target.closest?.('.key-button');
  if(!button||button.getAttribute('aria-label')!=='スクロール Xのキーフレーム')return;
  const s=state(),node=selected(),outer=node?.data?.scroll?.[0];if(!s?.p||!outer?.expr)return;
- const direct=s.p.expressions.find(x=>x.id===outer.expr);if(direct?.op==='track')return;
+ const direct=s.p.expressions.find(x=>x.id===outer.expr);
+ if(direct?.op==='track'){activeTrackId=direct.track;return}
  const trackBinding=nestedTrackBinding(outer,s.p);if(!trackBinding)return;
+ activeTrackId=trackIdForBinding(trackBinding,s.p);
  node.data.scroll[0]=trackBinding;
  queueMicrotask(()=>{if(node.data.scroll[0]===trackBinding)node.data.scroll[0]=outer})
 },true);
