@@ -15,6 +15,7 @@ export function node(type,name=type,parent='root'){let n={id:uid(),name,parent,c
  if(type==='scatter')n.data={template:'',count:24,seed:1,region:'disk',size:[160,160],rotation:{kind:'uniform',min:0,max:360},scale:{kind:'uniform',min:.3,max:1},delay:constant(0)};
  if(type==='particle')n.data={emitter:null,space:'world',seed:1,rate:12,bursts:[{time:0,count:24}],life:constant(3),spawnX:constant(0),spawnY:constant(0),spawnZ:constant(0),velocity:[constant(0),constant(0),constant(0)],acceleration:[0,0,0],inheritVelocity:0,rotation:constant(0),spin:constant(45),scale:constant(.15),alpha:1,scaleCurve:'particleScale',alphaCurve:'particleAlpha',assets:['shardAsset'],accelerationSpace:'world',radialLaunch:{angleStart:0,angleSpan:360,speed:constant(75),distribution:'distributed'}};
  if(type==='image')n.data={asset:'',crop:[0,0,100,100],width:120,height:120,fit:'contain'};
+ if(type==='clip')n.data={assets:['shardAsset'],times:[0],duration:1};
  if(type==='follower')n.data={path:'',u:0,orient:true,rotationOffset:0,asset:'glowAsset'};
  if(type==='trail')n.data={source:'',mode:'temporal',count:24,duration:.3,widthCurve:'particleScale',alphaCurve:'particleAlpha',asset:'glowAsset'};
  if(type==='instance')n.data={definition:'',overrides:[]};
