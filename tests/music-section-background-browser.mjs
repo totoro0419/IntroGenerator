@@ -65,7 +65,7 @@ try{
  // BPM changes must move beat-fixed boundaries without changing section values/easing.
  await page.locator('#project-settings').click();
  await page.waitForSelector('#timing-project-panel');
- const bpm=page.getByLabel('Tempo 1 BPM');await bpm.fill('60');await bpm.dispatchEvent('change');
+ const bpm=page.getByLabel('Tempo 1 BPM');await bpm.fill('60');await bpm.press('Tab');
  await page.waitForFunction(()=>window.__IG.state.p.tempo[0].bpm===60,{timeout:10000});
  await page.locator('#dialog-close').click();
  state=await inspect();
@@ -87,7 +87,7 @@ try{
  // Moving the Scene shifts the envelope as a whole; internal local Key times remain unchanged.
  await page.locator('#layers').getByRole('button',{name:'Scene',exact:true}).click();
  await page.waitForSelector('.timing-node-anchor');
- const startInput=page.getByLabel('開始',{exact:true});await startInput.fill('1.25');await startInput.dispatchEvent('change');
+ const startInput=page.getByLabel('開始',{exact:true});await startInput.fill('1.25');await startInput.press('Tab');
  await page.waitForFunction(id=>Math.abs(window.__IG.state.p.nodes.find(n=>n.id===id).time.start-1.25)<1e-9,sceneId,{timeout:10000});
  const afterMove=await sample(1.25);
  if(afterMove.some((v,i)=>Math.abs(v-beforeMove[i])>1e-8))throw Error('PDF-F17 Scene move changed internal speed sections: '+JSON.stringify({beforeMove,afterMove}));
